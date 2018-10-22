@@ -19,6 +19,15 @@ type Order struct {
 	common.MathPriceOrder `bson:",inline"`
 	AllHourWork           float32            `bson:"all_hour_work" json:"all_hour_work" validate:"required"`
 	Status                common.OrderStatus `bson:"status" json:"status" validate:"required"`
+	Employee              *CustomerEmp       `bson:"employee" json:"employee"`
+	Customer              *CustomerEmp       `bson:"customer" json:"customer"`
+	Services              []*ServiceDetail   `bson:"services" json:"services"`
+}
+
+type ServiceDetail struct {
+	ID           string   `json:"id" bson:"id"`
+	Name         string   `json:"name" bson:"name"`
+	NodeServices []string `json:"node_services" bson:"node_services"`
 }
 
 type Location struct {

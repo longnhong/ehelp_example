@@ -19,16 +19,27 @@ var validate = validator.New()
 
 func (ord *Order) create() error {
 	//check id service => kèm theo service //check id tool
-	var _, errs = service.GetServiceAndTool(ord.ServiceWorks)
+	var sers, errs = service.GetServiceAndTool(ord.ServiceWorks)
 	if errs != nil {
 		return errs
 	}
+
 	ord.Status = common.ORDER_STATUS_BIDDING
 	// tính tiền giờ
 	var hourAll, priceAllHour, priceTool, priceEnd, err = ord.MathPriceOrder.MathPriceOrder()
 	if err != nil {
 		return err
 	}
+	var serDs = make([]*ServiceDetail, 0)
+	for _, ser := range sers {
+		var serD = &ServiceDetail{
+			ID:           ser.ID,
+			Name:         ser.Name,
+			NodeServices: ser.NodeServices,
+		}
+		serDs = append(serDs, serD)
+	}
+	ord.Services = serDs
 	ord.AllHourWork = hourAll
 	ord.PriceAllHour = priceAllHour
 	ord.PriceTool = priceTool

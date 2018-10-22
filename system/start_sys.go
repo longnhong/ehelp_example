@@ -138,7 +138,7 @@ func SendPushAndChangeMissed() {
 
 func startCache(c *CacheOrderWorker) {
 	fmt.Println("Vào startCache")
-	every15Minute := time.Tick(2 * time.Minute)
+	every15Minute := time.Tick(5 * time.Minute)
 	for {
 		select {
 		case <-every15Minute:

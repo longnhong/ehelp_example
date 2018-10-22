@@ -32,6 +32,11 @@ func (tw *CacheOrderWorker) OnActionDone() (event.Line, event.Cancel) {
 }
 
 func SetCacheOrderDay() {
+	if CacheOrderByDay != nil && CacheOrderByDay.Orders != nil && len(CacheOrderByDay.Orders) > 0 {
+		for k, _ := range CacheOrderByDay.Orders {
+			delete(CacheOrderByDay.Orders, k)
+		}
+	}
 	var timeNow = time.Now()
 	var orders, _ = order.GetAllOrderCacheDay()
 	fmt.Printf("SỐ ORDER", len(orders))

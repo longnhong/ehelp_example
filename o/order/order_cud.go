@@ -56,7 +56,7 @@ func UpdateStatusByIds(ordIDs []string, status common.OrderStatus) (error, int) 
 	return err, rest.Updated
 }
 
-func (ord *Order) UpdateStatusOrder(status common.OrderStatus, empId string, cusID string) (*Order, error) {
+func (ord *Order) UpdateStatusOrder(status common.OrderStatus, empId string, cusID string, empCus *CustomerEmp) (*Order, error) {
 	fmt.Print("VO UpdateStatusOrder")
 	var err = ord.CheckStatus(status, empId, cusID)
 	if err != nil {
@@ -70,6 +70,9 @@ func (ord *Order) UpdateStatusOrder(status common.OrderStatus, empId string, cus
 	if len(empId) > 0 {
 		newUp["emp_id"] = empId
 	}
+	if empCus != nil {
+		newUp["employee"] = empCus
+	}
 	var tmNow = common.GetTimeNowVietNam().Unix()
 	newUp["updated_at"] = tmNow
 	err = OrderTable.UpdateId(ord.ID, bson.M{
@@ -78,6 +81,9 @@ func (ord *Order) UpdateStatusOrder(status common.OrderStatus, empId string, cus
 	if err == nil {
 		if len(empId) > 0 {
 			ord.EmpID = empId
+		}
+		if empCus != nil {
+			ord.Employee = empCus
 		}
 		ord.Status = status
 		ord.UpdatedAt = tmNow

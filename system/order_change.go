@@ -4,6 +4,7 @@ import (
 	"ehelp/common"
 	"ehelp/o/order"
 	"ehelp/x/mlog"
+	"encoding/json"
 	"errors"
 	"fmt"
 )
@@ -43,7 +44,13 @@ func (action *OrderAction) HandlerAction() {
 			action.SetError(err)
 			return
 		}
-		_, err1 := ord.UpdateStatusOrder(common.ORDER_STATUS_ACCEPTED, empID, "")
+		var extra = order.CustomerEmp{}
+		err = json.Unmarshal(action.Extra, &extra)
+		if err != nil {
+			action.SetError(err)
+			return
+		}
+		_, err1 := ord.UpdateStatusOrder(common.ORDER_STATUS_ACCEPTED, empID, "", &extra)
 		if err1 != nil {
 			fmt.Printf("ord.UpdateStatusOrder(common.ORDER_STATUS_ACCEPTED, empID, )", err)
 			action.SetError(err1)
@@ -67,7 +74,7 @@ func (action *OrderAction) HandlerAction() {
 		UpdateStatusCache(action.OrderID, common.ITEM_ORDER_STATUS_WORKING, common.ORDER_STATUS_WORKING)
 		working(ord, itemOrder)
 	case common.ORDER_STATUS_CANCELED:
-		_, err := ord.UpdateStatusOrder(common.ORDER_STATUS_CANCELED, "", ord.CusID)
+		_, err := ord.UpdateStatusOrder(common.ORDER_STATUS_CANCELED, "", ord.CusID, nil)
 		if err != nil {
 			action.SetError(err)
 			return

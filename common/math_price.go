@@ -107,8 +107,10 @@ func (ord *MathPriceOrder) MathPriceOrder() (hourAll float32, priceAllHour float
 	}
 	if len(ord.ServiceWorks) > 0 {
 		var service, err = service.GetByID(ord.ServiceWorks[0])
+		fmt.Printf("=====Service =====", service)
 		rest.AssertNil(err)
 		priceAllHour = hourAll * float32(service.PricePerHour)
+		fmt.Printf("priceAllHour", priceAllHour)
 	}
 	if len(ord.ToolServices) > 0 {
 		var srcTools, err = tool.GetToolByArrayID(ord.ToolServices)

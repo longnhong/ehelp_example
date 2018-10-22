@@ -9,7 +9,9 @@ import (
 	"ehelp/o/user/customer"
 	"ehelp/o/user/employee"
 	"ehelp/system"
+	"ehelp/x/mrw/encode"
 	"ehelp/x/rest"
+	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
 )
@@ -38,6 +40,12 @@ func (s *OrderServer) handleCreate(ctx *gin.Context) {
 	var cus = oAuth.GetCusFromToken(ctx.Request)
 	var ord *order.Order
 	rest.AssertNil(ctx.ShouldBindJSON(&ord))
+	var cust = &order.CustomerEmp{
+		ID:       cus.ID,
+		Phone:    cus.Phone,
+		FullName: cus.FullName,
+	}
+	ord.Customer = cust
 	//var hourMoney = cache.GetCacheHourMoney()
 	ord.CusID = cus.ID
 	var action = system.NewOrderAction()
@@ -54,27 +62,8 @@ func (s *OrderServer) handleCreate(ctx *gin.Context) {
 }
 
 func dataRespone(ordRes *order.Order, emp *employee.Employee, cus *customer.Customer) *order.OrderAll {
-	var empInfo *order.CustomerEmp
-	if emp != nil {
-		empInfo = &order.CustomerEmp{
-			ID:         emp.ID,
-			FullName:   emp.FullName,
-			LinkAvatar: emp.LinkAvatar,
-			Phone:      emp.Phone,
-		}
-	}
-	var cusInfo *order.CustomerEmp
-	if cus != nil {
-		cusInfo = &order.CustomerEmp{
-			ID:       cus.ID,
-			FullName: cus.FullName,
-			Phone:    cus.Phone,
-		}
-	}
 	var ordCus = order.OrderAll{
-		Order:    ordRes,
-		Customer: cusInfo,
-		Employee: empInfo,
+		Order: ordRes,
 	}
 	return &ordCus
 }
@@ -85,8 +74,17 @@ func (s *OrderServer) handleAccepted(ctx *gin.Context) {
 		OrderID string `json:"order_id"`
 	}{}
 	ctx.BindJSON(&body)
+	var ex = &order.CustomerEmp{
+		FullName:   emp.FullName,
+		LinkAvatar: emp.LinkAvatar,
+		Phone:      emp.Phone,
+		ID:         emp.ID,
+		Email:      emp.Email,
+		Address:    emp.Address,
+	}
+	var extra, _ = json.Marshal(ex)
 	//ord := system.CacheOrderByDay.Orders[body.OrderID]
-	ordRes := ActionChange(body.OrderID, emp.ID, common.ORDER_STATUS_ACCEPTED)
+	ordRes := ActionChange(body.OrderID, emp.ID, common.ORDER_STATUS_ACCEPTED, extra)
 	fmt.Print("QUA ERRR: " + ordRes.CusID)
 	var cus, _ = cache.GetCusID(ordRes.CusID)
 	fmt.Print("QUA CUS: " + ordRes.CusID)
@@ -116,17 +114,18 @@ func (s *OrderServer) handleEmpFinished(ctx *gin.Context) {
 	}{}
 	ctx.BindJSON(&body)
 	var emp = oAuth.GetEmpFromToken(ctx.Request)
-	ordRes := ActionChange(body.OrderID, emp.ID, common.ORDER_STATUS_FINISHED)
+	ordRes := ActionChange(body.OrderID, emp.ID, common.ORDER_STATUS_FINISHED, nil)
 	var cus, _ = cache.GetCusID(ordRes.CusID)
 	s.SendData(ctx, dataRespone(ordRes, emp, cus))
 }
 
-func ActionChange(orderID string, empId string, actionStatus common.OrderStatus) (ordRes *order.Order) {
+func ActionChange(orderID string, empId string, actionStatus common.OrderStatus, extra encode.RawMessage) (ordRes *order.Order) {
 	var action = system.NewOrderAction()
 	action.EmpId = empId
 	fmt.Printf("EMP ID", empId)
 	action.OrderID = orderID
 	action.Action = actionStatus
+	action.Extra = extra
 	system.CacheOrderByDay.TriggerTicketAction(action)
 	_, err := action.Wait()
 	rest.AssertNil(rest.BadRequestValid(err))
@@ -140,7 +139,7 @@ func (s *OrderServer) handleCancelled(ctx *gin.Context) {
 		OrderID string `json:"order_id"`
 	}{}
 	ctx.BindJSON(&body)
-	ordRes := ActionChange(body.OrderID, "", common.ORDER_STATUS_CANCELED)
+	ordRes := ActionChange(body.OrderID, "", common.ORDER_STATUS_CANCELED, nil)
 	s.SendData(ctx, dataRespone(ordRes, nil, cus))
 }
 
@@ -150,7 +149,7 @@ func (s *OrderServer) handleWorking(ctx *gin.Context) {
 		OrderID string `json:"order_id"`
 	}{}
 	rest.AssertNil(ctx.ShouldBindJSON(&body))
-	ordRes := ActionChange(body.OrderID, emp.ID, common.ORDER_STATUS_WORKING)
+	ordRes := ActionChange(body.OrderID, emp.ID, common.ORDER_STATUS_WORKING, nil)
 	var cus, _ = cache.GetCusID(ordRes.CusID)
 	s.SendData(ctx, dataRespone(ordRes, emp, cus))
 }

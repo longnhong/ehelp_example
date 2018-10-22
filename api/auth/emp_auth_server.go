@@ -71,7 +71,15 @@ func (s *EmpAuthServerMux) handleLoginEmp(ctx *gin.Context) {
 		"access_token": p,
 	})
 }
-
+func (s *EmpAuthServerMux) handleLoginFbUpdateEmp(ctx *gin.Context) {
+	var body = oAuth.LoginFB{}
+	ctx.BindJSON(&body)
+	var u, p = oAuth.CreateEmpFacebook(&body)
+	s.SendData(ctx, map[string]interface{}{
+		"employee":     u,
+		"access_token": p,
+	})
+}
 func (s *EmpAuthServerMux) handleLoginFacebookEmp(ctx *gin.Context) {
 	var body = oAuth.LoginFB{}
 	ctx.BindJSON(&body)

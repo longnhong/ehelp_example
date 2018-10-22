@@ -2,7 +2,7 @@ package order
 
 import (
 	"ehelp/common"
-	"ehelp/o/service"
+	//"ehelp/o/service"
 	"ehelp/o/tool"
 	"errors"
 	"fmt"
@@ -111,70 +111,65 @@ func GetOrderById(idOrder string) (*Order, error) {
 }
 
 type CustomerEmp struct {
-	ID         string `json:"id" bson:"_id"`
+	LinkAvatar string `bson:"link_avatar" json:"link_avatar"`
 	FullName   string `bson:"full_name" json:"full_name"`
-	Phone      string `bson:"phone" json:"phone" validate:"required"`
-	LinkAvatar string `bson:"link_avatar" json:"link_avatar" `
+	Phone      string `bson:"phone" json:"phone"`
+	Address    string `bson:"address" json:"address"`
+	Email      string `bson:"email" json:"email"`
+	ID         string `json:"id" bson:"_id"`
 }
 
 type OrderCusPromotion struct {
 	Order `bson:",inline"`
 	//Promotion *promotion.Promotion `json:"promotion" gorethink:"promotion"`
-	Customer    *CustomerEmp       `bson:"customer" json:"customer"`
-	Employee    *CustomerEmp       `bson:"employee" json:"employee"`
-	Service     []*service.Service `bson:"services" json:"services"`
-	ToolService []*tool.Tool       `bson:"tools" json:"tools"`
+	ToolService []*tool.Tool `bson:"tools" json:"tools"`
 }
 
 type OrderAll struct {
-	*Order `bson:",inline"`
-	//Promotion *promotion.Promotion `json:"promotion" gorethink:"promotion"`
-	Customer    *CustomerEmp       `bson:"customer" json:"customer"`
-	Employee    *CustomerEmp       `bson:"employee" json:"employee"`
-	Service     []*service.Service `bson:"services" json:"services"`
-	ToolService []*tool.Tool       `bson:"tools" json:"tools"`
+	*Order      `bson:",inline"`
+	ToolService []*tool.Tool `bson:"tools" json:"tools"`
 }
 
 func GetOrderAndCusAndEmp(idOrder string, typeGet int) (*OrderCusPromotion, error) {
 	var query = []bson.M{}
 	var queryMatch = bson.M{"_id": idOrder}
 
-	var joinCus = bson.M{
-		"from":         "customer",
-		"localField":   "cus_id",
-		"foreignField": "_id",
-		"as":           "customer",
-	}
-	var unWindCus = "$customer"
+	// var joinCus = bson.M{
+	// 	"from":         "customer",
+	// 	"localField":   "cus_id",
+	// 	"foreignField": "_id",
+	// 	"as":           "customer",
+	// }
+	// var unWindCus = "$customer"
 
-	var joinEmp = bson.M{
-		"from":         "employee",
-		"localField":   "emp_id",
-		"foreignField": "_id",
-		"as":           "employee",
-	}
-	var unWindEmp = "$employee"
+	// var joinEmp = bson.M{
+	// 	"from":         "employee",
+	// 	"localField":   "emp_id",
+	// 	"foreignField": "_id",
+	// 	"as":           "employee",
+	// }
+	// var unWindEmp = "$employee"
 
 	switch typeGet {
 	case 1:
 		query = []bson.M{
 			{"$match": queryMatch},
-			{"$lookup": joinCus},
-			{"$unwind": unWindCus},
+			//{"$lookup": joinCus},
+			//{"$unwind": unWindCus},
 		}
 	case 2:
 		query = []bson.M{
 			{"$match": queryMatch},
-			{"$lookup": joinEmp},
-			{"$unwind": unWindEmp},
+			//	{"$lookup": joinEmp},
+			//{"$unwind": unWindEmp},
 		}
 	case 3:
 		query = []bson.M{
 			{"$match": queryMatch},
-			{"$lookup": joinCus},
-			{"$unwind": unWindCus},
-			{"$lookup": joinEmp},
-			{"$unwind": unWindEmp},
+			//	{"$lookup": joinCus},
+			//	{"$unwind": unWindCus},
+			//	{"$lookup": joinEmp},
+			//	{"$unwind": unWindEmp},
 		}
 	}
 
@@ -295,11 +290,11 @@ func GetListOrderByStatus(userId string, serviceEmps []string, addressEmp string
 	var statusBidding = string(common.ORDER_STATUS_BIDDING)
 
 	var sortDate = bson.M{"day_start_work": -1}
-	var joinService = bson.M{
-		"from":         "service",
-		"localField":   "service_works",
-		"foreignField": "_id",
-		"as":           "services"}
+	// var joinService = bson.M{
+	// 	"from":         "service",
+	// 	"localField":   "service_works",
+	// 	"foreignField": "_id",
+	// 	"as":           "services"}
 	var joinTool = bson.M{
 		"from":         "tool",
 		"localField":   "tool_services",
@@ -319,41 +314,41 @@ func GetListOrderByStatus(userId string, serviceEmps []string, addressEmp string
 				queryMatch["day_start_work"] = bson.M{"$gte": timeNow + 10800}
 			}
 		}
-		var joinCus = bson.M{
-			"from":         "customer",
-			"localField":   "cus_id",
-			"foreignField": "_id",
-			"as":           "customer",
-		}
-		var unWindCus = bson.M{"path": "$customer", "preserveNullAndEmptyArrays": true}
+		// var joinCus = bson.M{
+		// 	"from":         "customer",
+		// 	"localField":   "cus_id",
+		// 	"foreignField": "_id",
+		// 	"as":           "customer",
+		// }
+		//var unWindCus = bson.M{"path": "$customer", "preserveNullAndEmptyArrays": true}
 		query = []bson.M{
 			{"$match": queryMatch},
 			{"$sort": sortDate},
 			{"$skip": skip},
 			{"$limit": limit},
-			{"$lookup": joinCus},
-			{"$lookup": joinService},
+			// {"$lookup": joinCus},
+			// {"$lookup": joinService},
 			{"$lookup": joinTool},
-			{"$unwind": unWindCus},
+			//{"$unwind": unWindCus},
 		}
 	} else {
-		var joinCus = bson.M{
-			"from":         "employee",
-			"localField":   "emp_id",
-			"foreignField": "_id",
-			"as":           "employee",
-		}
-		var unWindEmp = bson.M{"path": "$employee", "preserveNullAndEmptyArrays": true} // checknull
+		// var joinCus = bson.M{
+		// 	"from":         "employee",
+		// 	"localField":   "emp_id",
+		// 	"foreignField": "_id",
+		// 	"as":           "employee",
+		// }
+		// var unWindEmp = bson.M{"path": "$employee", "preserveNullAndEmptyArrays": true} // checknull
 		queryMatch["cus_id"] = userId
 		query = []bson.M{
 			{"$match": queryMatch},
 			{"$sort": sortDate},
 			{"$skip": skip},
 			{"$limit": limit},
-			{"$lookup": joinCus},
-			{"$lookup": joinService},
+			//{"$lookup": joinCus},
+			//{"$lookup": joinService},
 			{"$lookup": joinTool},
-			{"$unwind": unWindEmp},
+			//{"$unwind": unWindEmp},
 		}
 	}
 	err = OrderTable.Pipe(query).All(&ords)

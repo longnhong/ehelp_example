@@ -3,6 +3,7 @@ package system
 import (
 	"ehelp/common"
 	"ehelp/o/order"
+	"ehelp/x/mrw/encode"
 	"fmt"
 )
 
@@ -15,6 +16,7 @@ type OrderAction struct {
 	EmpId   string
 	Order   *order.OrderCheckChange `json:"order"`
 	Error   OrderActionError        `json:"error"`
+	Extra   encode.RawMessage       `json:"extra"`
 	doneC   chan struct{}
 	used    bool // must be trigger at most once
 }
