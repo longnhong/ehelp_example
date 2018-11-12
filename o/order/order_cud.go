@@ -105,13 +105,13 @@ func (ord *Order) UpdateStatusItem(itemID string, status common.ItemOrderStatus)
 			statusOrder = common.ORDER_STATUS_WORKING
 		}
 	case common.ORDER_STATUS_WORKING:
-		if status == common.ITEM_ORDER_STATUS_FINISHED {
+		if status == common.ITEM_ORDER_STATUS_FINISHED && ord.TypeWork == common.TYPE_ONE_WEEK {
 			items["status"] = common.ORDER_STATUS_FINISHED
-		}
-
-		if status == common.ITEM_ORDER_STATUS_FINISHED && ord.TypeWork == common.TYPE_ONE_WEEK && ord.CheckItemFinished() {
+			statusOrder = common.ORDER_STATUS_FINISHED
+		} else if status == common.ITEM_ORDER_STATUS_FINISHED && ord.CheckItemFinished() {
 			statusOrder = common.ORDER_STATUS_FINISHED
 		}
+
 	case common.ORDER_STATUS_FINISHED:
 		err = rest.WrapBadRequest(errors.New("Công việc đã kết thúc"), "")
 		return

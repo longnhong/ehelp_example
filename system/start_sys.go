@@ -5,6 +5,7 @@ import (
 	"ehelp/common"
 	"ehelp/o/order"
 	"ehelp/o/push_token"
+	"ehelp/o/voucher"
 	"ehelp/x/fcm"
 	"ehelp/x/mlog"
 	"ehelp/x/rest"
@@ -38,10 +39,13 @@ func GetOrderID(id string) (*order.Order, bool) {
 	// }
 	return ord, false
 }
+
 func Launch() {
 	cache.SetCacheCus()
 	cache.SetCacheEmp()
 	SetCacheOrderDay()
+	voucher.VoucherCache, _ = voucher.GetListVoucher()
+	fmt.Println("SỐ VOUS", len(voucher.VoucherCache))
 	go startCache(CacheOrderByDay)
 }
 
@@ -138,11 +142,11 @@ func SendPushAndChangeMissed() {
 
 func startCache(c *CacheOrderWorker) {
 	fmt.Println("Vào startCache")
-	every15Minute := time.Tick(5 * time.Minute)
+	everyMinute := time.Tick(5 * time.Minute)
 	for {
 		select {
-		case <-every15Minute:
-			fmt.Print("every15Minute")
+		case <-everyMinute:
+			fmt.Print("everyMinute")
 			checkAndSendPushEnd()
 			checkAndSendPushBf()
 			SendPushAndChangeMissed()

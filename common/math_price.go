@@ -3,6 +3,7 @@ package common
 import (
 	"ehelp/o/service"
 	"ehelp/o/tool"
+	"ehelp/o/voucher"
 	"ehelp/x/rest"
 	"ehelp/x/rest/math"
 	"errors"
@@ -12,7 +13,7 @@ import (
 
 type MathPriceOrder struct {
 	TypeWork     TypeWork     `bson:"type_work" json:"type_work" validate:"required"`
-	Promotions   []string     `bson:"promotions" json:"promotions"`
+	Vouchers     []string     `bson:"vouchers" json:"vouchers"`
 	ServiceWorks []string     `bson:"service_works" json:"service_works" validate:"required"`
 	ToolServices []string     `bson:"tool_services" json:"tool_services"`
 	DayWeeks     DayWeeks     `bson:"day_weeks" json:"day_weeks"`
@@ -88,7 +89,8 @@ func (ord *MathPriceOrder) MathHourWork() (float32, error) {
 	return hourInWeek, err
 }
 
-func (ord *MathPriceOrder) MathPriceOrder() (hourAll float32, priceAllHour float32, priceTool float32, priceEnd float32, err error) {
+func (ord *MathPriceOrder) MathPriceOrder() (hourAll float32, priceAllHour float32, priceTool float32, priceEnd float32, vous []*voucher.Voucher, err error) {
+
 	hourAll, err = ord.MathHourWork()
 	if err != nil {
 		return
@@ -107,10 +109,11 @@ func (ord *MathPriceOrder) MathPriceOrder() (hourAll float32, priceAllHour float
 	}
 	if len(ord.ServiceWorks) > 0 {
 		var service, err = service.GetByID(ord.ServiceWorks[0])
-		fmt.Printf("=====Service =====", service)
-		rest.AssertNil(err)
+		if err != nil {
+			return 0, 0, 0, 0, nil, err
+		}
+
 		priceAllHour = hourAll * float32(service.PricePerHour)
-		fmt.Printf("priceAllHour", priceAllHour)
 	}
 	if len(ord.ToolServices) > 0 {
 		var srcTools, err = tool.GetToolByArrayID(ord.ToolServices)
@@ -122,5 +125,37 @@ func (ord *MathPriceOrder) MathPriceOrder() (hourAll float32, priceAllHour float
 		}
 	}
 	priceEnd = priceAllHour + priceTool
+	if ord.Vouchers != nil && len(ord.Vouchers) > 0 {
+		vous, err = ord.getVoucher()
+		if err != nil {
+			return 0, 0, 0, 0, nil, err
+		}
+		for _, v := range vous {
+			if v.Value > 0 {
+				priceEnd = priceEnd - v.Value
+			} else if v.ValueRatio > 0 {
+				priceEnd = priceEnd - priceEnd*v.ValueRatio
+			}
+		}
+	}
 	return
+}
+
+func (ord *MathPriceOrder) getVoucher() ([]*voucher.Voucher, error) {
+	if len(ord.Vouchers) > 0 {
+		var vous = make([]*voucher.Voucher, 0)
+		for _, v := range ord.Vouchers {
+			var vou, err = voucher.GetVoucherByID(v)
+			if err != nil {
+				return nil, err
+			}
+			vou, err = vou.Validate(int(ord.TypeWork))
+			if err != nil {
+				return nil, err
+			}
+			vous = append(vous, vou)
+		}
+		return vous, nil
+	}
+	return nil, nil
 }

@@ -8,6 +8,7 @@ import (
 	oAuth "ehelp/o/user/auth"
 	"ehelp/o/user/customer"
 	"ehelp/o/user/employee"
+	"ehelp/o/voucher"
 	"ehelp/system"
 	"ehelp/x/mrw/encode"
 	"ehelp/x/rest"
@@ -26,6 +27,7 @@ func NewOrderServer(parent *gin.RouterGroup, name string) {
 		RouterGroup: parent.Group(name),
 	}
 	s.POST("create", s.handleCreate)
+	//s.POST("update_vou", s.handlVoucher)
 	s.POST("status/accepted", s.handleAccepted)
 	s.POST("status/working", s.handleWorking)
 	//s.POST("status/cus_finished", s.handleCusFinished)
@@ -58,6 +60,7 @@ func (s *OrderServer) handleCreate(ctx *gin.Context) {
 	system.CacheOrderByDay.TriggerTicketAction(action)
 	var ordRes, err = action.Wait()
 	rest.AssertNil(err)
+	voucher.UpdateCount(ord.Vouchers)
 	s.SendData(ctx, dataRespone(ordRes, nil, cus))
 }
 

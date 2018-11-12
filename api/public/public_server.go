@@ -84,12 +84,13 @@ func (s *PublicServerMux) handleSuggestPrice(ctx *gin.Context) {
 	auth.GetCusFromToken(ctx.Request)
 	var body *common.MathPriceOrder
 	ctx.BindJSON(&body)
-	var allHour, priceAllHour, priceTool, priceEnd, err = body.MathPriceOrder()
+	var allHour, priceAllHour, priceTool, priceEnd, vous, err = body.MathPriceOrder()
 	rest.AssertNil(err)
 	s.SendData(ctx, map[string]interface{}{
 		"all_hour_work":  allHour,
 		"price_all_hour": priceAllHour,
 		"price_end":      priceEnd,
 		"price_tool":     priceTool,
+		"data_voucher":   vous,
 	})
 }

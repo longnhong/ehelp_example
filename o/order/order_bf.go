@@ -26,7 +26,7 @@ func (ord *Order) create() error {
 
 	ord.Status = common.ORDER_STATUS_BIDDING
 	// tính tiền giờ
-	var hourAll, priceAllHour, priceTool, priceEnd, err = ord.MathPriceOrder.MathPriceOrder()
+	var hourAll, priceAllHour, priceTool, priceEnd, vous, err = ord.MathPriceOrder.MathPriceOrder()
 	if err != nil {
 		return err
 	}
@@ -44,6 +44,7 @@ func (ord *Order) create() error {
 	ord.PriceAllHour = priceAllHour
 	ord.PriceTool = priceTool
 	ord.PriceEnd = int(priceEnd)
+	ord.DataVoucher = vous
 	if err := validate.Struct(ord); err != nil {
 		return rest.BadRequestValid(err)
 	}

@@ -2,6 +2,7 @@ package order
 
 import (
 	"ehelp/common"
+	"ehelp/o/voucher"
 	"ehelp/x/db/mongodb"
 )
 
@@ -22,6 +23,7 @@ type Order struct {
 	Employee              *CustomerEmp       `bson:"employee" json:"employee"`
 	Customer              *CustomerEmp       `bson:"customer" json:"customer"`
 	Services              []*ServiceDetail   `bson:"services" json:"services"`
+	DataVoucher           []*voucher.Voucher `bson:"data_voucher" json:"data_voucher"`
 }
 
 type ServiceDetail struct {

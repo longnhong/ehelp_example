@@ -26,8 +26,8 @@ type TypeWork int
 
 const (
 	TYPE_ONE_WEEK   = TypeWork(1) // kiểu 1 tuần 1 lần
-	TYPE_TWO_WEEK   = TypeWork(2) // kiểu 2 tuần 1 lần
-	TYPE_THREE_WEEK = TypeWork(3) // kiểu 3 tháng 1 lần
+	TYPE_TWO_WEEK   = TypeWork(2) // kiểu 1 thang
+	TYPE_THREE_WEEK = TypeWork(3) // kiểu tùy chọn nhiều ngày
 	TYPE_FOUR_WEEK  = TypeWork(4) // kiểu 4 tuần 1 lần
 )
 

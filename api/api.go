@@ -8,6 +8,7 @@ import (
 	//"ehelp/api/test_table"
 	order "ehelp/api/order_server"
 	"ehelp/api/user"
+	"ehelp/api/voucher"
 	"github.com/gin-gonic/gin"
 )
 
@@ -17,7 +18,7 @@ func InitApi(root *gin.RouterGroup) {
 	auth.NewAuthServer(root, "auth")
 	admin.NewAdminServer(root, "admin")
 	order.NewOrderServer(root, "order")
-
+	voucher.NewVoucherServer(root, "voucher")
 	auth.NewAuthCustomerServer(root, "customer/auth")
 	auth.NewAuthEmployeeServer(root, "employee/auth")
 	public.NewPublicServer(root, "public")
