@@ -60,7 +60,9 @@ func (s *OrderServer) handleCreate(ctx *gin.Context) {
 	system.CacheOrderByDay.TriggerTicketAction(action)
 	var ordRes, err = action.Wait()
 	rest.AssertNil(err)
-	voucher.UpdateCount(ord.Vouchers)
+	if ord.Vouchers != nil && len(ord.Vouchers) > 0 {
+		voucher.UpdateCount(ord.Vouchers)
+	}
 	s.SendData(ctx, dataRespone(ordRes, nil, cus))
 }
 
