@@ -137,6 +137,9 @@ func (ord *MathPriceOrder) MathPriceOrder() (hourAll float32, priceAllHour float
 				priceEnd = priceEnd - priceEnd*v.ValueRatio
 			}
 		}
+		if priceEnd < 0 {
+			priceEnd = 0
+		}
 	}
 	return
 }

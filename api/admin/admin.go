@@ -8,6 +8,7 @@ import (
 	usr "ehelp/o/admin/user"
 	"ehelp/o/auth"
 	"ehelp/o/order_hst"
+	oVou "ehelp/o/voucher"
 	"ehelp/x/rest"
 	"github.com/gin-gonic/gin"
 )
@@ -22,6 +23,7 @@ func NewAdminServer(parent *gin.RouterGroup, name string) *AdminServer {
 	var s = AdminServer{
 		RouterGroup: parent.Group(name),
 	}
+	s.POST("refresh_config", s.handleRefresh)
 	s.POST("/signin", s.handleSignin)
 	s.GET("/super_admin", s.handleExistSuperAdmin)
 	s.POST("/register", s.handleRegister)
@@ -32,6 +34,22 @@ func NewAdminServer(parent *gin.RouterGroup, name string) *AdminServer {
 	user.NewUserServer(s.RouterGroup, "user")
 	return &s
 }
+
+func (s *AdminServer) handleRefresh(ctx *gin.Context) {
+	var body = struct {
+		Username string `json:"username"`
+		Password string `json:"password"`
+		Role     string `json:"role"`
+	}{}
+	ctx.BindJSON(&body)
+	_, err := usr.GetByUNamePwd(body.Username, body.Password, body.Role)
+	rest.AssertNil(err)
+	res, err := oVou.GetListVoucher()
+	rest.AssertNil(err)
+	oVou.VoucherCache = res
+	s.SendData(ctx, oVou.VoucherCache)
+}
+
 func (s *AdminServer) handleOrderHistory(ctx *gin.Context) {
 	var res, err = order_hst.GetOrderHistory()
 	rest.AssertNil(err)

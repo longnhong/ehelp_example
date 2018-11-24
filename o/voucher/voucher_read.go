@@ -31,5 +31,5 @@ func GetVoucherByCode(code string) (vou *Voucher, err error) {
 			"$gte": timeNow,
 		},
 	}
-	return vou, VoucherTable.FindWhere(match, &vou)
+	return vou, VoucherTable.FindOne(match, &vou)
 }

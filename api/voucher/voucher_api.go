@@ -24,6 +24,7 @@ func NewVoucherServer(parent *gin.RouterGroup, name string) {
 }
 
 // func (s *VoucherServer) handleCreate(ctx *gin.Context) {
+// 	oAuth.GetCusFromToken(ctx.Request)
 // 	var body *oVou.Voucher
 // 	ctx.BindJSON(&body)
 // 	var vou, err = body.Create()
