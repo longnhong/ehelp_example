@@ -94,6 +94,13 @@ func GetAllOrderCacheDay() (ords []*Order, err error) {
 	return
 }
 
+func GetAllOrderPriceLte() (ords []*Order, err error) {
+	err = OrderTable.FindWhere(bson.M{
+		"price_end": bson.M{"$lte": 0},
+	}, &ords)
+	return
+}
+
 func GetAllOrderBiddingDay() (ords []*Order, err error) {
 	err = OrderTable.Find(bson.M{
 		"status": common.ORDER_STATUS_BIDDING,

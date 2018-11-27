@@ -12,7 +12,7 @@ import (
 var logOrder = mlog.NewTagLog("Order")
 
 func (ord *Order) CrateOrder() (*Order, error) {
-	var err = ord.create()
+	var err = ord.Create()
 	if err != nil {
 		logOrder.Errorf("CrateOrder", err)
 		return nil, err

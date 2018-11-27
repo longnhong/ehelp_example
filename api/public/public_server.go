@@ -10,6 +10,7 @@ import (
 	"ehelp/o/user/auth"
 	"ehelp/x/fcm"
 	"ehelp/x/rest"
+	"fmt"
 	"github.com/gin-gonic/gin"
 )
 
@@ -28,6 +29,7 @@ func NewPublicServer(parent *gin.RouterGroup, name string) {
 	s.GET("test", s.handleTEST)
 	s.GET("service/list_by_services", s.handleListByService)
 	s.GET("area/list_area", s.handleListArea)
+	s.GET("order/batch_change_order", s.handleChangeOrder)
 	s.POST("order/suggest_price", s.handleSuggestPrice).Use(middleware.AuthenticateAppRole(auth.RoleCustomer))
 }
 
@@ -38,6 +40,18 @@ func (s *PublicServerMux) handleUpAvatar(ctx *gin.Context) {
 	var link = fcm.LINK_AVATAR + idSer
 	rest.AssertNil(ctx.SaveUploadedFile(file, "./upload/avatar/"+idSer))
 	rest.AssertNil(service.UpdateIconLink(idSer, link))
+	s.SendData(ctx, nil)
+}
+
+func (s *PublicServerMux) handleChangeOrder(ctx *gin.Context) {
+	var orders, _ = order.GetAllOrderPriceLte()
+	if len(orders) > 0 {
+		for _, ord := range orders {
+			ord.Create()
+			err := ord.UpdateBatch()
+			fmt.Println(err)
+		}
+	}
 	s.SendData(ctx, nil)
 }
 

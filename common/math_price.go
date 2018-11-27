@@ -44,8 +44,8 @@ func (a DayWeeks) Less(i, j int) bool { return a[i].DateIn < a[j].DateIn }
 
 func (ord *MathPriceOrder) MathHourWork() (float32, error) {
 	var err error
-	var timeNow = BeginningOfDayVN().Unix()
-	var hourMinuteNow = HourMinute()
+	// var timeNow = BeginningOfDayVN().Unix()
+	// var hourMinuteNow = HourMinute()
 	// if ord.TypeWork == TYPE_ONE_WEEK {
 	// 	if timeNow > timeOrdStart {
 	// 		rest.AssertNil(rest.WrapBadRequest(errors.New("Không thể đặt trước ngày hôm nay!"), ""))
@@ -64,10 +64,10 @@ func (ord *MathPriceOrder) MathHourWork() (float32, error) {
 	sort.Sort(DayWeeks(ord.DayWeeks))
 
 	for _, item := range ord.DayWeeks {
-		var timeOrdStart = BeginningOfDayInt64VN(item.DateIn).Unix()
-		if timeOrdStart < timeNow || (timeOrdStart == timeNow && hourMinuteNow > item.HourStart) {
-			continue
-		}
+		//var timeOrdStart = BeginningOfDayInt64VN(item.DateIn).Unix()
+		// if timeOrdStart < timeNow || (timeOrdStart == timeNow && hourMinuteNow > item.HourStart) {
+		// 	continue
+		// }
 
 		item.IdItem = math.RandStringUpper("", 6)
 		var hourDay = item.HourEnd - item.HourStart
@@ -134,13 +134,21 @@ func (ord *MathPriceOrder) MathPriceOrder() (hourAll float32, priceAllHour float
 			if v.Value > 0 {
 				priceEnd = priceEnd - v.Value
 			} else if v.ValueRatio > 0 {
-				priceEnd = priceEnd - priceEnd*v.ValueRatio
+				var end = priceEnd - priceEnd*v.ValueRatio/100
+				priceEnd = float32(int(end/1000+0.5) * 1000)
 			}
 		}
 		if priceEnd < 0 {
 			priceEnd = 0
 		}
 	}
+	fmt.Println(
+		"hourAll", hourAll,
+		"priceAllHour", priceAllHour,
+		"priceTool", priceTool,
+		"priceEnd", priceEnd,
+		"vous", vous,
+	)
 	return
 }
 

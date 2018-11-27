@@ -72,3 +72,8 @@ func (t *Table) UpdateByID(id string, i IModel) error {
 	i.BeforeUpdate()
 	return t.UpdateId(id, i)
 }
+
+func (t *Table) UpdateSetByID(id string, data bson.M) error {
+	data["updated_at"] = getTimeNowVietNam().Unix()
+	return t.UpdateId(id, bson.M{"$set": data})
+}

@@ -9,7 +9,7 @@ import (
 	"ehelp/o/service"
 	"errors"
 	validator "gopkg.in/go-playground/validator.v9"
-	// "gopkg.in/mgo.v2/bson"
+	"gopkg.in/mgo.v2/bson"
 	//"strings"
 	"ehelp/common"
 	"ehelp/x/rest"
@@ -17,7 +17,7 @@ import (
 
 var validate = validator.New()
 
-func (ord *Order) create() error {
+func (ord *Order) Create() error {
 	//check id service => kèm theo service //check id tool
 	var sers, errs = service.GetServiceAndTool(ord.ServiceWorks)
 	if errs != nil {
@@ -53,6 +53,9 @@ func (ord *Order) create() error {
 
 func (ord *Order) update(status common.OrderStatus) error {
 	return ord.CheckStatus(status, "", "")
+}
+func (ord *Order) UpdateBatch() error {
+	return OrderTable.UpdateSetByID(ord.ID, bson.M{"price_end": ord.PriceEnd})
 }
 
 func (ord *Order) CheckStatus(status common.OrderStatus, empId string, cusID string) (err error) {

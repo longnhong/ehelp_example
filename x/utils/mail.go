@@ -8,7 +8,7 @@ type Mail struct {
 	To      string
 }
 
-var mailDialer = gomail.NewDialer("smtp.gmail.com", 465, "trunglenlvn@gmail.com", "gfgsimshbzgwrxwa")
+var mailDialer = gomail.NewDialer("smtp.gmail.com", 465, "longtm23@gmail.com", "gfgsimshbzgwrxwa")
 
 func (mail Mail) Send() {
 	m := gomail.NewMessage()
