@@ -23,7 +23,7 @@ func NewAdminServer(parent *gin.RouterGroup, name string) *AdminServer {
 	var s = AdminServer{
 		RouterGroup: parent.Group(name),
 	}
-	s.POST("refresh_config", s.handleRefresh)
+	s.POST("/refresh_config", s.handleRefresh)
 	s.POST("/signin", s.handleSignin)
 	s.GET("/super_admin", s.handleExistSuperAdmin)
 	s.POST("/register", s.handleRegister)

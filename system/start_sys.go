@@ -45,7 +45,7 @@ func Launch() {
 	cache.SetCacheEmp()
 	SetCacheOrderDay()
 	voucher.VoucherCache, _ = voucher.GetListVoucher()
-	fmt.Println("SỐ VOUS", len(voucher.VoucherCache))
+	fmt.Println("SỐ VOUS", voucher.VoucherCache)
 	go startCache(CacheOrderByDay)
 }
 
