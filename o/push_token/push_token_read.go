@@ -25,7 +25,8 @@ func GetPushsUserId(userId string) ([]string, error) {
 func GetPushsUserIds(userIds []string) ([]string, error) {
 	var pushs []string
 	var err = PushTokenTable.Find(bson.M{
-		"user_id": bson.M{"$in": userIds},
+		"user_id":   bson.M{"$in": userIds},
+		"is_revoke": false,
 	}).Distinct("push_token", &pushs)
 	fmt.Println(len(pushs))
 	return pushs, err

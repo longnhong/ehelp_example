@@ -1,7 +1,7 @@
 package system
 
 import (
-	"ehelp/cache"
+	//"ehelp/cache"
 	"ehelp/common"
 	"ehelp/o/order"
 	"ehelp/o/push_token"
@@ -41,8 +41,8 @@ func GetOrderID(id string) (*order.Order, bool) {
 }
 
 func Launch() {
-	cache.SetCacheCus()
-	cache.SetCacheEmp()
+	//cache.SetCacheCus()
+	//cache.SetCacheEmp()
 	SetCacheOrderDay()
 	voucher.VoucherCache, _ = voucher.GetListVoucher()
 	fmt.Println("SỐ VOUS", voucher.VoucherCache)
