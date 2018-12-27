@@ -290,6 +290,7 @@ func GetListOrderUserByStatus(userId string, status []string, role int) (ords []
 }
 
 func GetListOrderByStatus(userId string, serviceEmps []string, addressEmp string, role int, serviceId string, status []string, skip int, limit int) (ords []*OrderCusPromotion, err error) {
+	fmt.Println("DATA SERVICE", serviceEmps)
 	var query []bson.M
 	var queryMatch = bson.M{}
 	var timeNow = common.GetTimeNowVietNam().Unix()
@@ -317,7 +318,7 @@ func GetListOrderByStatus(userId string, serviceEmps []string, addressEmp string
 			// 	queryMatch["address_loc.address"] = bson.M{"$regex": addressEmp, "$options": "i"}
 			// }
 			if len(serviceEmps) > 0 {
-				queryMatch["service_works"] = bson.M{"$in": serviceEmps}
+				queryMatch["service_works.0"] = bson.M{"$in": serviceEmps}
 				queryMatch["day_start_work"] = bson.M{"$gte": timeNow + 10800}
 			}
 		}

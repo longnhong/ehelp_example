@@ -12,6 +12,7 @@ func LoginEmployee(lg *LoginUser) (*employee.Employee, string) {
 	validLogin(lg)
 	var err, res = employee.GetEmployeeByLogin(lg.Phone, string(lg.Password))
 	rest.AssertNil(err)
+	updateToken(res.ID)
 	return res, CreatePushToken(int(RoleEmployee), res.ID, lg.DeviceId, lg.PushToken).ID
 }
 
@@ -24,6 +25,7 @@ func LoginEmployeeFaceBook(lb *LoginFB) (*employee.Employee, string) {
 			rest.AssertNil(err)
 		}
 		rest.AssertNil(res.UpdateEmployeeFb(lb.FbId, lb.FbToken))
+		updateToken(res.ID)
 		return res, CreatePushToken(int(RoleEmployee), res.ID, lb.DeviceId, lb.PushToken).ID
 	}
 	return res, ""
@@ -38,6 +40,7 @@ func LoginEmployeeGmail(lb *LoginGmail) (*employee.Employee, string) {
 			rest.AssertNil(err)
 		}
 		rest.AssertNil(res.UpdateEmployeeGmail(lb.GmId, lb.GmToken))
+		updateToken(res.ID)
 		return res, CreatePushToken(int(RoleEmployee), res.ID, lb.DeviceId, lb.PushToken).ID
 	}
 	return res, ""

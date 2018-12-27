@@ -8,11 +8,13 @@ import (
 	oAuth "ehelp/o/user/auth"
 	"ehelp/x/rest"
 	"ehelp/x/web"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"strconv"
 )
 
 func (s *OrderServer) handleListOrder(ctx *gin.Context) {
+	fmt.Println("VO LOG handleListOrder")
 	var query = ctx.Request.URL.Query()
 	var status = web.GetArrString("status", ",", query)
 	var skip, _ = strconv.ParseInt(query.Get("skip"), 10, 64)
@@ -21,18 +23,20 @@ func (s *OrderServer) handleListOrder(ctx *gin.Context) {
 	var role int
 	var addressEmp string
 	var services string
-	var userId string
+	var userID string
 	var serviceEmp []string
 	if emp != nil {
 		addressEmp = emp.EmployeeWork.AddressWork
 		role = int(oAuth.RoleEmployee)
-		userId = emp.ID
+		userID = emp.ID
 		serviceEmp = emp.EmployeeWork.ServiceIds
+		fmt.Println("ROLE EMP", role)
 	} else {
 		role = int(oAuth.RoleCustomer)
-		userId = cus.ID
+		userID = cus.ID
+		fmt.Println("ROLE CUS", role)
 	}
-	var data, err = order.GetListOrderByStatus(userId, serviceEmp, addressEmp, role, services, status, int(skip), int(limit))
+	var data, err = order.GetListOrderByStatus(userID, serviceEmp, addressEmp, role, services, status, int(skip), int(limit))
 	rest.AssertNil(rest.WrapBadRequest(err, ""))
 	s.SendData(ctx, data)
 }

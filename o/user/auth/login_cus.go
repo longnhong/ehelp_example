@@ -61,10 +61,15 @@ func CreatePushToken(role int, userId string, deviceID string, pushToken string)
 	return psh.CratePushToken()
 }
 
+func updateToken(userID string) {
+	push_token.UpdateTokenByUser(userID)
+}
+
 func LoginCustomer(lg *LoginUser) (*customer.Customer, string) {
 	validLogin(lg)
 	var err, res = customer.GetCustomerByLogin(lg.Phone, string(lg.Password))
 	rest.AssertNil(err)
+	updateToken(res.ID)
 	return res, CreatePushToken(int(RoleCustomer), res.ID, lg.DeviceId, lg.PushToken).ID
 }
 
@@ -83,6 +88,7 @@ func LoginCustomerFaceBook(lb *LoginFB) (*customer.Customer, string) {
 			rest.AssertNil(err)
 		}
 		rest.AssertNil(res.UpdateCustomerFb(lb.FbId, lb.FbToken))
+		updateToken(res.ID)
 		return res, CreatePushToken(int(RoleCustomer), res.ID, lb.DeviceId, lb.PushToken).ID
 	}
 	return res, ""
@@ -97,6 +103,7 @@ func LoginCustomerGmail(lb *LoginGmail) (*customer.Customer, string) {
 			rest.AssertNil(err)
 		}
 		rest.AssertNil(res.UpdateCustomerGmail(lb.GmId, lb.GmToken))
+		updateToken(res.ID)
 		return res, CreatePushToken(int(RoleCustomer), res.ID, lb.DeviceId, lb.PushToken).ID
 	}
 	return res, ""

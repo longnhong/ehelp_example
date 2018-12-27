@@ -30,3 +30,9 @@ func DeleteTokenByUser(userID string) error {
 	var _, err = PushTokenTable.RemoveAll(bson.M{"user_id": userID})
 	return err
 }
+
+func UpdateTokenByUser(userID string) error {
+	var _, err = PushTokenTable.UpdateAll(bson.M{"user_id": userID,
+		"is_revoke": false}, bson.M{"is_revoke": true})
+	return err
+}
