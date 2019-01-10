@@ -21,11 +21,11 @@ func GetCustomerByLogin(phone string, password string) (error, *Customer) {
 	var cus *Customer
 	err := CustomerTable.FindOne(bson.M{"phone": phone}, &cus)
 	if err != nil {
-		return rest.BadRequestNotFound(errors.New("tài khoản không tồn tại!")), nil
+		return rest.BadRequestNotFound(errors.New("Tài khoản không tồn tại!")), nil
 	}
 	var psd = user.Password(cus.Password)
 	if err := psd.ComparePassword(password); err != nil {
-		return rest.BadRequestValid(errors.New("Password sai!")), nil
+		return rest.BadRequestValid(errors.New("Sai mật khẩu!")), nil
 	}
 	return nil, cus
 }
@@ -37,6 +37,9 @@ func GetCusByPhone(phone string, email string) (int, error) {
 			bson.M{"email": email},
 		},
 	})
+}
+func GetCusByEmail(email string) (int, error) {
+	return CustomerTable.CountWhere(bson.M{"email": email})
 }
 
 func GetByPhone(phone string) (int, error) {
@@ -59,7 +62,7 @@ func GetCustomerByLoginGmail(gmId string) (error, *Customer) {
 	err := CustomerTable.FindOne(bson.M{"gm_id": gmId}, &cus)
 	if err != nil {
 		if err.Error() == common.NOT_EXIST {
-			return rest.BadRequestNotFound(errors.New("tài khoản không tồn tại!")), nil
+			return rest.BadRequestNotFound(errors.New("Tài khoản không tồn tại!")), nil
 		}
 		return err, nil
 	}

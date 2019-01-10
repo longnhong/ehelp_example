@@ -60,18 +60,21 @@ func CheckExistByPhone(phone string, email string) error {
 	var count int
 	var err error
 	if email != "" {
-		count, err = GetCusByPhone(phone, email)
+		count, err = GetCusByEmail(email)
+		if count > 0 {
+			return rest.BadRequestNotFound(errors.New("Email đã tồn tại"))
+		}
 	} else {
 		count, err = GetByPhone(phone)
+		if count > 0 {
+			return rest.BadRequestNotFound(errors.New("Số điện thoại đã tồn tại"))
+		}
 	}
 	if err != nil {
 		if err.Error() != common.NOT_EXIST {
-			return rest.BadRequestNotFound(errors.New("Tài khoản đã tồn tại"))
+			return rest.BadRequestNotFound(errors.New("Có lỗi xảy ra."))
 		}
 		return err
-	}
-	if count > 0 {
-		return rest.BadRequestNotFound(errors.New("Tài khoản đã tồn tại"))
 	}
 	return nil
 }

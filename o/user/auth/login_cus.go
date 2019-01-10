@@ -77,7 +77,7 @@ func LoginCustomerFaceBook(lb *LoginFB) (*customer.Customer, string) {
 	var err, res = customer.GetCustomerByLoginFb(lb.FbId)
 	if err != nil {
 		if err.Error() == common.NOT_EXIST {
-			rest.AssertNil(rest.BadRequestNotFound(errors.New("tài khoản không tồn tại!")))
+			rest.AssertNil(rest.BadRequestNotFound(errors.New("Tài khoản không tồn tại!")))
 		}
 		rest.AssertNil(err)
 	}

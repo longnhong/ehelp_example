@@ -15,7 +15,7 @@ func GetEmployeeByLogin(phone string, password string) (error, *Employee) {
 	var cus *Employee
 	err := EmployeeTable.FindOne(bson.M{"phone": phone}, &cus)
 	if err != nil || cus == nil {
-		err = rest.BadRequestNotFound(errors.New("tài khoản không tồn tại!"))
+		err = rest.BadRequestNotFound(errors.New("Tài khoản không tồn tại!"))
 		logEmp.Errorf("GetEmployeeByLogin", err)
 		return err, nil
 	}
@@ -51,7 +51,7 @@ func GetEmployeeByLoginFb(fbId string) (error, *Employee) {
 	if err != nil {
 		logEmp.Errorf("GetEmployeeByLoginFb", err)
 		if err.Error() == common.NOT_EXIST {
-			return rest.BadRequestNotFound(errors.New("tài khoản không tồn tại!")), nil
+			return rest.BadRequestNotFound(errors.New("Tài khoản không tồn tại!")), nil
 		}
 		return err, nil
 	}
@@ -64,7 +64,7 @@ func GetEmployeeByLoginGmail(gmId string) (error, *Employee) {
 	if err != nil {
 		logEmp.Errorf("GetEmployeeByLoginGmail", err)
 		if err.Error() == common.NOT_EXIST {
-			return rest.BadRequestNotFound(errors.New("tài khoản không tồn tại!")), nil
+			return rest.BadRequestNotFound(errors.New("Tài khoản không tồn tại!")), nil
 		}
 		return err, nil
 	}
