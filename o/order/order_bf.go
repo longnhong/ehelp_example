@@ -18,6 +18,10 @@ import (
 var validate = validator.New()
 
 func (ord *Order) Create() error {
+	err1 := ord.validate()
+	if err1 != nil {
+		return err1
+	}
 	//check id service => kèm theo service //check id tool
 	var sers, errs = service.GetServiceAndTool(ord.ServiceWorks)
 	if errs != nil {
@@ -30,14 +34,9 @@ func (ord *Order) Create() error {
 	if err != nil {
 		return err
 	}
-	var serDs = make([]*ServiceDetail, 0)
+	var serDs = make([]*service.Service, 0)
 	for _, ser := range sers {
-		var serD = &ServiceDetail{
-			ID:           ser.ID,
-			Name:         ser.Name,
-			NodeServices: ser.NodeServices,
-		}
-		serDs = append(serDs, serD)
+		serDs = append(serDs, ser.Service)
 	}
 	ord.Services = serDs
 	ord.AllHourWork = hourAll
@@ -47,6 +46,13 @@ func (ord *Order) Create() error {
 	ord.DataVoucher = vous
 	if err := validate.Struct(ord); err != nil {
 		return rest.BadRequestValid(err)
+	}
+	return nil
+}
+
+func (ord *Order) validate() error {
+	if ord.Vouchers != nil && len(ord.Vouchers) > 1 {
+		return rest.BadRequestValid(errors.New("Chỉ áp dụng 1 mã khuyến mại/1 đơn"))
 	}
 	return nil
 }

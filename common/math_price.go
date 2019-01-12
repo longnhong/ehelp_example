@@ -105,7 +105,7 @@ func (ord *MathPriceOrder) MathPriceOrder() (hourAll float32, priceAllHour float
 	case TYPE_FOUR_WEEK:
 	//	hourAll = hourAll * 4
 	default:
-		rest.AssertNil(rest.BadRequestValid(errors.New("Không tồn tại loại làm việc này!")))
+		return 0, 0, 0, 0, nil, rest.BadRequestValid(errors.New("Không tồn tại loại làm việc này!"))
 	}
 	if len(ord.ServiceWorks) > 0 {
 		var service, err = service.GetByID(ord.ServiceWorks[0])

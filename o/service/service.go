@@ -96,12 +96,8 @@ func GetToolServices(types string) ([]*Service, error) {
 }
 
 type ServiceTool struct {
-	mongodb.BaseModel `bson:",inline"`
-	NodeServices      []string    `bson:"node_services" json:"node_services"`
-	Name              string      `bson:"name" json:"name" validate:"required"`
-	PricePerHour      int         `bson:"price_per_hour" json:"price_per_hour" validate:"required"`
-	IconLink          string      `bson:"icon_link" json:"icon_link"`
-	Tools             []tool.Tool `bson:"tools" json:"tools"`
+	*Service
+	Tools []tool.Tool `bson:"tools" json:"tools"`
 }
 
 func GetServiceAndTool(idServices []string) ([]*ServiceTool, error) {
