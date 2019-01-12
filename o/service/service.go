@@ -21,6 +21,7 @@ type Service struct {
 	NodeServices      []string `bson:"node_services" json:"node_services"`
 	PricePerHour      int      `bson:"price_per_hour" json:"price_per_hour" validate:"required"`
 	Tools             []string `bson:"tools" json:"tools"`
+	Description       string   `bson:"description" json:"description"`
 }
 
 var validate = validator.New()
