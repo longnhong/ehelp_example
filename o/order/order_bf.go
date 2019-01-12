@@ -36,7 +36,14 @@ func (ord *Order) Create() error {
 	}
 	var serDs = make([]*service.Service, 0)
 	for _, ser := range sers {
-		serDs = append(serDs, ser.Service)
+		var serv = &service.Service{}
+		serv.ID = ser.ID
+		serv.Name = ser.Name
+		serv.IconLink = ser.IconLink
+		serv.NodeServices = ser.NodeServices
+		serv.PricePerHour = ser.PricePerHour
+		serv.Description = ser.Description
+		serDs = append(serDs, serv)
 	}
 	ord.Services = serDs
 	ord.AllHourWork = hourAll
