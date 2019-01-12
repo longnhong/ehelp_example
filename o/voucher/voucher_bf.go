@@ -17,7 +17,7 @@ func (v *Voucher) ValidateVoucher() (*Voucher, error) {
 
 func (vou *Voucher) Validate(typeSer int) (*Voucher, error) {
 	if typeSer != 0 && vou.ServiceType != typeSer {
-		return nil, rest.BadRequestValid(errors.New("Mã không sử dụng cho loại hình dịch vụ này! Vui lòng xem lại."))
+		return nil, rest.BadRequestValid(errors.New("Mã " + vou.Code + " không sử dụng cho loại hình này"))
 	}
 	var timeNow = time.Now().Unix()
 	if vou.StartTime > timeNow || vou.EndTime < timeNow {
@@ -50,12 +50,18 @@ func GetVoucherByID(vouCode string) (vouRes *Voucher, err error) {
 			err = rest.BadRequestValid(errors.New("Mã không tồn tại!"))
 		}
 	} else {
-		vouRes, err = GetVoucherByCode(vouCode)
+		vouRes, err = GetVoucherCode(vouCode)
 		if err != nil {
 			if rest.IsNotFound(err) {
 				return nil, rest.BadRequestValid(errors.New("Mã không tồn tại!"))
 			}
-			return nil, rest.BadRequestValid(errors.New("Mã không tồn tại hoặc đã hết hạn!"))
+			return nil, rest.BadRequestValid(errors.New("Có lỗi xảy ra. Vui lòng thử lại!"))
+		}
+		if vouRes != nil {
+			var timeNow = time.Now().Unix()
+			if vouRes.StartTime > timeNow || vouRes.EndTime < timeNow {
+				return nil, rest.BadRequestValid(errors.New("Mã đã hết hạn!"))
+			}
 		}
 	}
 	return

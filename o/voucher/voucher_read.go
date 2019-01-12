@@ -19,7 +19,7 @@ func GetListVoucher() (lstVoucher []*Voucher, err error) {
 	return lstVoucher, VoucherTable.FindWhere(match, &lstVoucher)
 }
 
-func GetVoucherByCode(code string) (vou *Voucher, err error) {
+func GetVoucherByCodeTime(code string) (vou *Voucher, err error) {
 	var timeNow = time.Now().Unix()
 	var match = bson.M{
 		"code":   code,
@@ -30,6 +30,13 @@ func GetVoucherByCode(code string) (vou *Voucher, err error) {
 		"end_time": bson.M{
 			"$gte": timeNow,
 		},
+	}
+	return vou, VoucherTable.FindOne(match, &vou)
+}
+func GetVoucherCode(code string) (vou *Voucher, err error) {
+	var match = bson.M{
+		"code":   code,
+		"active": true,
 	}
 	return vou, VoucherTable.FindOne(match, &vou)
 }

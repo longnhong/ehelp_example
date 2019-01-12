@@ -24,10 +24,8 @@ func accepted(ord *order.Order) {
 		var noti = fcm.FmcMessage{
 			Title: "Đã có người nhận!",
 			Body:  emp.FullName + " đã nhận đơn"}
-		fcm.FcmCustomer.SendToMany(pushs, noti)
-		fmt.Println("====" + emp.FullName + " đã nhận đơn")
+		sendNotify(noti, nil, ord.CusID, false, pushs, common.ORDER_STATUS_ACCEPTED)
 	}
-	fmt.Printf("QUA ALL")
 }
 func bidding(ord *order.Order) {
 	var empIds, _ = oAuth.GetListEmpVsOrderBidding(ord.ServiceWorks, ord.AddressLoc.Address)
@@ -35,11 +33,10 @@ func bidding(ord *order.Order) {
 	logAction.Errorf("push_token.GetPushsUserIds", err2)
 	var noti = fcm.FmcMessage{
 		Title: "Có việc mới!",
-		Body:  "Công việc tại " + ord.AddressLoc.Address}
-	fcm.FcmEmployee.SendToMany(pushs, noti)
-	fmt.Printf("========= CUSID: "+ord.CusID+" ID: "+ord.ID, ord.ServiceWorks)
+		Body:  "Công việc tại " + ord.AddressLoc.Address,
+	}
+	sendNotify(noti, empIds, "", true, pushs, common.ORDER_STATUS_BIDDING)
 	CreateOrderHst(ord.CusID, ord.ID, ord.ServiceWorks, common.ORDER_STATUS_BIDDING)
-	fmt.Printf("QUA ALL")
 }
 
 func working(ord *order.Order, itemOrder *common.DayWeek) {
@@ -51,8 +48,7 @@ func working(ord *order.Order, itemOrder *common.DayWeek) {
 	var noti = fcm.FmcMessage{
 		Title: "Bắt đầu làm việc!",
 		Body:  empOrd.FullName + " vừa bắt đầu làm việc!"}
-	fcm.FcmCustomer.SendToMany(pushs, noti)
-	fmt.Println("====" + empOrd.FullName + " đã nhận đơn")
+	sendNotify(noti, nil, ord.CusID, false, pushs, common.ORDER_STATUS_WORKING)
 }
 
 func finished(ord *order.Order, itemOrder *common.DayWeek) {
@@ -67,12 +63,12 @@ func finished(ord *order.Order, itemOrder *common.DayWeek) {
 		var noti = fcm.FmcMessage{
 			Title: "Công việc đã hoàn thành!",
 			Body:  empOrd.FullName + " đã hoàn thành đầy đủ đơn mà bạn đặt! Lên đơn mới nếu muốn tìm người giúp việc!"}
-		fcm.FcmCustomer.SendToMany(pushs, noti)
+		sendNotify(noti, nil, ord.CusID, false, pushs, common.ORDER_STATUS_FINISHED)
 	} else {
 		var noti = fcm.FmcMessage{
 			Title: "Công việc đã hoàn thành!",
 			Body:  empOrd.FullName + " đã hoàn thành việc ngày hôm nay!"}
-		fcm.FcmCustomer.SendToMany(pushs, noti)
+		sendNotify(noti, nil, ord.CusID, false, pushs, common.ORDER_STATUS_FINISHED)
 	}
 }
 

@@ -13,8 +13,9 @@ type FcmClient struct {
 }
 
 type FmcMessage struct {
-	Title string `json:"title,omitempty"`
-	Body  string `json:"body,omitempty"`
+	Title string      `json:"title,omitempty"`
+	Body  string      `json:"body,omitempty"`
+	Data  interface{} `json:"data,omitempty"`
 }
 
 func NewFCM(serverKey string) *FcmClient {
@@ -27,9 +28,9 @@ func (f *FcmClient) SendToMany(ids []string, data FmcMessage) (error, string) {
 	var noti = fcm.NotificationPayload{
 		Title: data.Title,
 		Body:  data.Body,
-		Sound:"ting.wav",
+		Sound: "ting.wav",
 	}
-	f.NewFcmRegIdsMsg(ids, data)
+	f.NewFcmRegIdsMsg(ids, data.Data)
 	f.SetNotificationPayload(&noti)
 	status, err := f.Send()
 	if err != nil {

@@ -84,7 +84,7 @@ func checkAndSendPushBf() {
 					".\nVui lòng đến đúng giờ!",
 			}
 			var pushs, _ = push_token.GetPushsUserId(ord.EmpID)
-			fcm.FcmEmployee.SendToMany(pushs, notify)
+			sendNotify(notify, []string{ord.EmpID}, "", true, pushs, ord.Status)
 			ord.IsUsedBf = true
 		}
 
@@ -101,7 +101,7 @@ func checkAndSendPushEnd() {
 				Body:  body + common.ConvertF32ToString(ord.HourEndItem) + " sẽ đủ số giờ làm. Hãy bấm kết thúc!",
 			}
 			var pushs, _ = push_token.GetPushsUserId(ord.EmpID)
-			fcm.FcmEmployee.SendToMany(pushs, notify)
+			sendNotify(notify, []string{ord.EmpID}, "", true, pushs, ord.Status)
 			ord.IsUsedEnd = true
 		}
 	}
@@ -133,7 +133,7 @@ func SendPushAndChangeMissed() {
 				" sẽ được hủy do không tìm được người làm.\nQuý khách vui lòng lên lại đơn để tìm người giúp việc!",
 		}
 		var pushs, _ = push_token.GetPushsUserId(ord.CusID)
-		fcm.FcmCustomer.SendToMany(pushs, notify)
+		sendNotify(notify, nil, ord.CusID, false, pushs, common.ORDER_STATUS_OPEN)
 		ord.IsUsedMissed = true
 		//delete(CacheOrderByDay.Orders, ord.ID)
 	}
