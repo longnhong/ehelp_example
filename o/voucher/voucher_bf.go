@@ -26,7 +26,7 @@ func (vou *Voucher) Validate(typeSer int) (*Voucher, error) {
 	if !vou.Active && !vou.AutoActive {
 		return nil, rest.BadRequestValid(errors.New("Mã chưa được kích hoạt!"))
 	}
-	if vou.Quantity != 0 && vou.Count == vou.Quantity {
+	if vou.Quantity != 0 && vou.Count >= vou.Quantity {
 		return nil, rest.BadRequestValid(errors.New("Mã quá số lượng cho phép!"))
 	}
 
