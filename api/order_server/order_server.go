@@ -86,6 +86,7 @@ func (s *OrderServer) handleAccepted(ctx *gin.Context) {
 		ID:         emp.ID,
 		Email:      emp.Email,
 		Address:    emp.Address,
+		Services:   emp.EmployeeWork.ServiceIds,
 	}
 	var extra, _ = json.Marshal(ex)
 	//ord := system.CacheOrderByDay.Orders[body.OrderID]

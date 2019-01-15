@@ -14,15 +14,15 @@ func (u *Staff) Create() error {
 	hashed, _ := u.Password.GererateHashedPassword()
 	u.Password = hashed
 	if u.Role == STAFF {
-		rest.AssertNil(rest.WrapBadRequest(validator.Validate(u), ""))
+		rest.AssertNil(rest.BadRequestValid(validator.Validate(u)))
 		return UserTable.CreateUnique(queryUnique, u)
 	}
 	if u.Role == OWNER {
-		rest.AssertNil(rest.WrapBadRequest(validator.Validate(u.Owner), ""))
+		rest.AssertNil(rest.BadRequestValid(validator.Validate(u.Owner)))
 		return UserTable.CreateUnique(queryUnique, &u.Owner)
 	}
 	{
-		rest.AssertNil(rest.WrapBadRequest(validator.Validate(u.User), ""))
+		rest.AssertNil(rest.BadRequestValid(validator.Validate(u.User)))
 		if u.Role == SUPER_ADMIN {
 			return UserTable.CreateUnique(bson.M{"role": SUPER_ADMIN}, &u.User)
 		}

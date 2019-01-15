@@ -36,20 +36,20 @@ func (action *OrderAction) HandlerAction() {
 		}
 		bidding(ord)
 	case common.ORDER_STATUS_ACCEPTED:
-		var empID = action.EmpId
-		fmt.Printf("HAND EMP ID", empID)
-		err := ord.CheckAppendOrderEmp(empID)
-		if err != nil {
-			fmt.Printf("ord.CheckAppendOrderEmp(empID)", err)
-			action.SetError(err)
-			return
-		}
 		var extra = order.CustomerEmp{}
-		err = json.Unmarshal(action.Extra, &extra)
+		err := json.Unmarshal(action.Extra, &extra)
 		if err != nil {
 			action.SetError(err)
 			return
 		}
+		var empID = action.EmpId
+
+		err = ord.CheckAppendOrderEmp(empID, extra.Services)
+		if err != nil {
+			action.SetError(err)
+			return
+		}
+
 		_, err1 := ord.UpdateStatusOrder(common.ORDER_STATUS_ACCEPTED, empID, "", &extra)
 		if err1 != nil {
 			fmt.Printf("ord.UpdateStatusOrder(common.ORDER_STATUS_ACCEPTED, empID, )", err)

@@ -37,7 +37,7 @@ func (s *OrderServer) handleListOrder(ctx *gin.Context) {
 		fmt.Println("ROLE CUS", role)
 	}
 	var data, err = order.GetListOrderByStatus(userID, serviceEmp, addressEmp, role, services, status, int(skip), int(limit))
-	rest.AssertNil(rest.WrapBadRequest(err, ""))
+	rest.AssertNil(rest.BadRequestValid(err))
 	s.SendData(ctx, data)
 }
 
@@ -47,7 +47,7 @@ func (s *OrderServer) handleOrderMine(ctx *gin.Context) {
 	var start, _ = strconv.ParseInt(query.Get("start"), 10, 64)
 	var end, _ = strconv.ParseInt(query.Get("end"), 10, 64)
 	var ords, err = order_hst.GetOrderMine(start, end, emp.ID)
-	rest.AssertNil(rest.WrapBadRequest(err, ""))
+	rest.AssertNil(rest.BadRequestValid(err))
 	var money float32
 	for _, item := range ords {
 		money += item.MoneyDay

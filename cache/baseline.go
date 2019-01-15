@@ -8,7 +8,7 @@ import (
 
 func MoveOrderToOpen() {
 	var idOder, err = order.GetAllOrderToExpired()
-	rest.AssertNil(rest.WrapBadRequest(err, ""))
+	rest.AssertNil(rest.BadRequestValid(err))
 	var errs, _ = order.UpdateStatusOrders(idOder, string(common.ORDER_STATUS_OPEN))
 	rest.AssertNil(errs)
 }

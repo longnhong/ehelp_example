@@ -48,14 +48,14 @@ func (ord *MathPriceOrder) MathHourWork() (float32, error) {
 	// var hourMinuteNow = HourMinute()
 	// if ord.TypeWork == TYPE_ONE_WEEK {
 	// 	if timeNow > timeOrdStart {
-	// 		rest.AssertNil(rest.WrapBadRequest(errors.New("Không thể đặt trước ngày hôm nay!"), ""))
+	// 		rest.AssertNil(rest.BadRequestValid(errors.New("Không thể đặt trước ngày hôm nay!"), ""))
 	// 	} else if timeNow == timeOrdStart {
 	// 		sort.Sort(DayWeeks(ord.DayWeeks))
 	// 		var timeStartMin = ord.DayWeeks[0].HourStart
 	// 		var dateIn = ord.DayWeeks[0].DateIn
 	// 		var timeItemMin = BeginningOfDayInt64(dateIn).Unix()
 	// 		if timeItemMin == timeOrdStart && HourMinute() > timeStartMin {
-	// 			rest.AssertNil(rest.WrapBadRequest(errors.New("Đặt lại! Giờ làm việc lớn hơn giờ hiện tại!"), ""))
+	// 			rest.AssertNil(rest.BadRequestValid(errors.New("Đặt lại! Giờ làm việc lớn hơn giờ hiện tại!"), ""))
 	// 		}
 	// 	}
 	// }
@@ -118,7 +118,7 @@ func (ord *MathPriceOrder) MathPriceOrder() (hourAll float32, priceAllHour float
 	if len(ord.ToolServices) > 0 {
 		var srcTools, err = tool.GetToolByArrayID(ord.ToolServices)
 		if err != nil && err.Error() != NOT_EXIST {
-			rest.AssertNil(rest.WrapBadRequest(err, ""))
+			rest.AssertNil(rest.BadRequestValid(err))
 		}
 		for _, item := range srcTools {
 			priceTool += float32(item.Price)
@@ -138,9 +138,9 @@ func (ord *MathPriceOrder) MathPriceOrder() (hourAll float32, priceAllHour float
 				priceEnd = float32(int(end/1000+0.5) * 1000)
 			}
 		}
-		if priceEnd < 0 {
-			priceEnd = 0
-		}
+	}
+	if priceEnd < 0 {
+		priceEnd = 0
 	}
 	fmt.Println(
 		"hourAll", hourAll,

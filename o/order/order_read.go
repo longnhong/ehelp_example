@@ -4,6 +4,7 @@ import (
 	"ehelp/common"
 	//"ehelp/o/service"
 	"ehelp/o/tool"
+	"ehelp/x/rest"
 	"errors"
 	"fmt"
 	"gopkg.in/mgo.v2/bson"
@@ -118,12 +119,13 @@ func GetOrderById(idOrder string) (*Order, error) {
 }
 
 type CustomerEmp struct {
-	LinkAvatar string `bson:"link_avatar" json:"link_avatar"`
-	FullName   string `bson:"full_name" json:"full_name"`
-	Phone      string `bson:"phone" json:"phone"`
-	Address    string `bson:"address" json:"address"`
-	Email      string `bson:"email" json:"email"`
-	ID         string `json:"id" bson:"_id"`
+	LinkAvatar string   `bson:"link_avatar" json:"link_avatar"`
+	FullName   string   `bson:"full_name" json:"full_name"`
+	Phone      string   `bson:"phone" json:"phone"`
+	Address    string   `bson:"address" json:"address"`
+	Email      string   `bson:"email" json:"email"`
+	ID         string   `json:"id" bson:"_id"`
+	Services   []string `json:"services" bson:"-"`
 }
 
 type OrderCusPromotion struct {
@@ -234,8 +236,18 @@ func GetAllOrderToFinished() ([]*Order, error) {
 	return allOrder, err
 }
 
-func (ord *Order) CheckAppendOrderEmp(empID string) error {
-	fmt.Printf("VO CheckAppendOrderEmp", "")
+func (ord *Order) CheckAppendOrderEmp(empID string, services []string) error {
+	var isExistService = false
+	for _, ser := range services {
+		for _, serO := range ord.ServiceWorks {
+			if ser == serO {
+				isExistService = true
+			}
+		}
+	}
+	if !isExistService {
+		return errors.New("Bạn không đăng ký dịch vụ này!")
+	}
 	var status = []string{string(common.ORDER_STATUS_ACCEPTED), string(common.ORDER_STATUS_WORKING)}
 	var ords, err = GetListOrderUserByStatus(empID, status, 1)
 	if err != nil {
@@ -295,8 +307,19 @@ func GetListOrderByStatus(userId string, serviceEmps []string, addressEmp string
 	var queryMatch = bson.M{}
 	var timeNow = common.GetTimeNowVietNam().Unix()
 	queryMatch["status"] = bson.M{"$in": status}
-	var statusBidding = string(common.ORDER_STATUS_BIDDING)
 
+	var isBidding = false
+	if status == nil {
+		return nil, rest.BadRequestValid(errors.New("Không có trạng thái nào!"))
+	} else {
+
+		for _, st := range status {
+			if st == string(common.ORDER_STATUS_BIDDING) {
+				isBidding = true
+				break
+			}
+		}
+	}
 	var sortDate = bson.M{"day_start_work": -1}
 	// var joinService = bson.M{
 	// 	"from":         "service",
@@ -310,7 +333,7 @@ func GetListOrderByStatus(userId string, serviceEmps []string, addressEmp string
 		"as":           "tools"}
 
 	if role == 2 { //Employee
-		if status[0] != statusBidding {
+		if !isBidding {
 			queryMatch["emp_id"] = userId
 
 		} else {

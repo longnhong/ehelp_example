@@ -113,10 +113,10 @@ func (ord *Order) UpdateStatusItem(itemID string, status common.ItemOrderStatus)
 		}
 
 	case common.ORDER_STATUS_FINISHED:
-		err = rest.WrapBadRequest(errors.New("Công việc đã kết thúc"), "")
+		err = rest.BadRequestValid(errors.New("Công việc đã kết thúc"))
 		return
 	case common.ORDER_STATUS_CANCELED:
-		err = rest.WrapBadRequest(errors.New("Công việc đã bị hủy"), "")
+		err = rest.BadRequestValid(errors.New("Công việc đã bị hủy"))
 		return
 	}
 	var timeNow = common.GetTimeNowVietNam()
@@ -126,12 +126,11 @@ func (ord *Order) UpdateStatusItem(itemID string, status common.ItemOrderStatus)
 			var timeWork1 = timeNow.Unix() - item.MTime
 			if status == common.ITEM_ORDER_STATUS_FINISHED && timeWork-timeWork1 > 0 {
 				var mes = "Thời gian làm việc phải đủ " + common.ConvertF32ToString(item.HourDay)
-				err = rest.WrapBadRequest(errors.New(mes), "")
-				fmt.Printf("LỖI KẾT THÚC", err)
+				err = rest.BadRequestValid(errors.New(mes))
 				return
 			}
 			if item.Status == status && common.CompareDayTime(timeNow, item.MTime) == 0 {
-				err = rest.WrapBadRequest(errors.New("Bạn đã thực hiện thao tác này"), "")
+				err = rest.BadRequestValid(errors.New("Bạn đã thực hiện thao tác này"))
 				return
 			}
 			item.Status = status
