@@ -51,6 +51,7 @@ func (ord *Order) Create() error {
 	ord.PriceTool = priceTool
 	ord.PriceEnd = int(priceEnd)
 	ord.DataVoucher = vous
+	ord.PricePromotion = priceAllHour - priceEnd
 	if err := validate.Struct(ord); err != nil {
 		return rest.BadRequestValid(err)
 	}
@@ -102,6 +103,9 @@ func (ord *Order) CheckStatus(status common.OrderStatus, empId string, cusID str
 	case common.ORDER_STATUS_FINISHED:
 		err = errors.New("Đơn đã kết thúc!")
 	case common.ORDER_STATUS_CANCELED:
+		if status == common.ORDER_STATUS_ACCEPTED {
+			err = errors.New("Đơn đã bị hủy!")
+		}
 		if status != common.ORDER_STATUS_FINISHED && len(cusID) > 0 {
 			err = errors.New("Không thể kết thúc khi chưa làm việc!")
 		}

@@ -36,8 +36,13 @@ func NewOrderServer(parent *gin.RouterGroup, name string) {
 	s.POST("rate", s.handleRating)
 	s.GET("list_order", s.handleListOrder)
 	s.GET("order_mine", s.handleOrderMine)
+	s.GET("get_order", s.handleOrder)
 }
-
+func (s *OrderServer) handleOrder(ctx *gin.Context) {
+	var orID = ctx.Request.URL.Query().Get("id")
+	ordRes, _ := system.GetOrderID(orID)
+	s.SendData(ctx, ordRes)
+}
 func (s *OrderServer) handleCreate(ctx *gin.Context) {
 	var cus = oAuth.GetCusFromToken(ctx.Request)
 	var ord *order.Order
