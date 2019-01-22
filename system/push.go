@@ -6,13 +6,14 @@ import (
 	"ehelp/x/fcm"
 )
 
-func sendNotify(fData fcm.FmcMessage, empIDs []string, cusID string, isSendEmp bool, pushs []string, status common.OrderStatus) {
+func sendNotify(fData fcm.FmcMessage, empIDs []string, cusID string, isSendEmp bool, pushs []string, orderID string, status common.OrderStatus) {
 	var noti = notify.Notify{
 		Title:      fData.Title,
 		Body:       fData.Body,
 		EmpIDs:     empIDs,
 		CusID:      cusID,
 		StatusOder: status,
+		OrderID:    orderID,
 	}
 	noti.Create()
 	fData.Data = noti

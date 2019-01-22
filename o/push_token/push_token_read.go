@@ -14,12 +14,16 @@ func GetByID(id string) (*PushToken, error) {
 }
 
 func GetPushsUserId(userId string) ([]string, error) {
-	var pushs []string
-	var err = PushTokenTable.Find(bson.M{
-		"user_id": userId,
-	}).Distinct("push_token", &pushs)
-	fmt.Printf("BẮN ID", pushs)
-	return pushs, err
+	var auth *PushToken
+	err := PushTokenTable.FindOne(bson.M{
+		"user_id":   userId,
+		"is_revoke": false,
+	}, &auth)
+	var p string
+	if auth != nil {
+		p = auth.PushToken
+	}
+	return []string{p}, err
 }
 
 func GetPushsUserIds(userIds []string) ([]string, error) {

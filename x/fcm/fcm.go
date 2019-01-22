@@ -30,7 +30,7 @@ func (f *FcmClient) SendToMany(ids []string, data FmcMessage) (error, string) {
 		Body:  data.Body,
 		Sound: "ting.wav",
 	}
-	f.NewFcmRegIdsMsg(ids, data.Data)
+	f.NewFcmRegIdsMsg(ids, map[string]interface{}{"notify": data.Data})
 	f.SetNotificationPayload(&noti)
 	status, err := f.Send()
 	if err != nil {

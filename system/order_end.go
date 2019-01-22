@@ -24,18 +24,18 @@ func accepted(ord *order.Order) {
 		var noti = fcm.FmcMessage{
 			Title: "Đã có người nhận!",
 			Body:  emp.FullName + " đã nhận đơn"}
-		sendNotify(noti, nil, ord.CusID, false, pushs, common.ORDER_STATUS_ACCEPTED)
+		sendNotify(noti, nil, ord.CusID, false, pushs, ord.ID, common.ORDER_STATUS_ACCEPTED)
 	}
 }
 func bidding(ord *order.Order) {
 	var empIds, _ = oAuth.GetListEmpVsOrderBidding(ord.ServiceWorks, ord.AddressLoc.Address)
 	var pushs, err2 = push_token.GetPushsUserIds(empIds) // phải distinic
-	logAction.Errorf("push_token.GetPushsUserIds", err2)
+	logAction.Errorf("push_token.GetPushsUserId", err2)
 	var noti = fcm.FmcMessage{
 		Title: "Có việc mới!",
 		Body:  "Công việc tại " + ord.AddressLoc.Address,
 	}
-	sendNotify(noti, empIds, "", true, pushs, common.ORDER_STATUS_BIDDING)
+	sendNotify(noti, empIds, "", true, pushs, ord.ID, common.ORDER_STATUS_BIDDING)
 	CreateOrderHst(ord.CusID, ord.ID, ord.ServiceWorks, common.ORDER_STATUS_BIDDING)
 }
 
@@ -48,7 +48,7 @@ func working(ord *order.Order, itemOrder *common.DayWeek) {
 	var noti = fcm.FmcMessage{
 		Title: "Bắt đầu làm việc!",
 		Body:  empOrd.FullName + " vừa bắt đầu làm việc!"}
-	sendNotify(noti, nil, ord.CusID, false, pushs, common.ORDER_STATUS_WORKING)
+	sendNotify(noti, nil, ord.CusID, false, pushs, ord.ID, common.ORDER_STATUS_WORKING)
 }
 
 func finished(ord *order.Order, itemOrder *common.DayWeek) {
@@ -63,12 +63,12 @@ func finished(ord *order.Order, itemOrder *common.DayWeek) {
 		var noti = fcm.FmcMessage{
 			Title: "Công việc đã hoàn thành!",
 			Body:  empOrd.FullName + " đã hoàn thành đầy đủ đơn mà bạn đặt! Lên đơn mới nếu muốn tìm người giúp việc!"}
-		sendNotify(noti, nil, ord.CusID, false, pushs, common.ORDER_STATUS_FINISHED)
+		sendNotify(noti, nil, ord.CusID, false, pushs, ord.ID, common.ORDER_STATUS_FINISHED)
 	} else {
 		var noti = fcm.FmcMessage{
 			Title: "Công việc đã hoàn thành!",
 			Body:  empOrd.FullName + " đã hoàn thành việc ngày hôm nay!"}
-		sendNotify(noti, nil, ord.CusID, false, pushs, common.ORDER_STATUS_FINISHED)
+		sendNotify(noti, nil, ord.CusID, false, pushs, ord.ID, common.ORDER_STATUS_FINISHED)
 	}
 }
 
