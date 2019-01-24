@@ -3,6 +3,7 @@ package admin
 import (
 	"ehelp/api/admin/report"
 	"ehelp/api/admin/service"
+	"ehelp/api/admin/setting"
 	"ehelp/api/admin/user"
 	"ehelp/middleware"
 	usr "ehelp/o/admin/user"
@@ -32,6 +33,7 @@ func NewAdminServer(parent *gin.RouterGroup, name string) *AdminServer {
 	service.NewServiceServer(s.RouterGroup, "service")
 	report.NewReportServer(s.RouterGroup, "report")
 	user.NewUserServer(s.RouterGroup, "user")
+	setting.NewSettingServer(s.RouterGroup, "setting")
 	return &s
 }
 

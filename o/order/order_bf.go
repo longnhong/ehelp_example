@@ -30,7 +30,8 @@ func (ord *Order) Create() error {
 
 	ord.Status = common.ORDER_STATUS_BIDDING
 	// tính tiền giờ
-	var hourAll, priceAllHour, priceTool, priceEnd, vous, err = ord.MathPriceOrder.MathPriceOrder()
+	//var hourAll, priceAllHour, priceTool, priceEnd, vous, err = ord.MathPriceOrder.MathPriceOrder()
+	var hourAll, _, _, _, vous, err = ord.MathPriceOrder.MathPriceOrder()
 	if err != nil {
 		return err
 	}
@@ -47,11 +48,11 @@ func (ord *Order) Create() error {
 	}
 	ord.Services = serDs
 	ord.AllHourWork = hourAll
-	ord.PriceAllHour = priceAllHour
-	ord.PriceTool = priceTool
-	ord.PriceEnd = int(priceEnd)
+	//ord.PriceAllHour = priceAllHour
+	// ord.PriceTool = priceTool
+	// ord.PriceEnd = int(priceEnd)
 	ord.DataVoucher = vous
-	ord.PricePromotion = priceAllHour - priceEnd
+	//ord.PricePromotion = priceAllHour - priceEnd
 	if err := validate.Struct(ord); err != nil {
 		return rest.BadRequestValid(err)
 	}

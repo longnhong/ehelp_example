@@ -2,6 +2,7 @@ package order
 
 import (
 	"ehelp/common"
+	"ehelp/setting"
 	//"ehelp/o/service"
 	"ehelp/o/tool"
 	"ehelp/x/rest"
@@ -342,7 +343,7 @@ func GetListOrderByStatus(userId string, serviceEmps []string, addressEmp string
 			// }
 			if len(serviceEmps) > 0 {
 				queryMatch["service_works.0"] = bson.M{"$in": serviceEmps}
-				queryMatch["day_start_work"] = bson.M{"$gte": timeNow + 10800}
+				queryMatch["day_start_work"] = bson.M{"$gte": timeNow + int64(setting.SettingSys.TimeHourHiddenOrder*3600)}
 			}
 		}
 		// var joinCus = bson.M{

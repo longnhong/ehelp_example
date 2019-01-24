@@ -2,6 +2,7 @@ package fcm
 
 import (
 	fcm "github.com/NaySoftware/go-fcm"
+	"time"
 )
 
 const (
@@ -24,14 +25,27 @@ func NewFCM(serverKey string) *FcmClient {
 	}
 }
 
+type dataMsg struct {
+	Content interface{} `json:"content,omitempty"`
+	Time    int64       `json:"time,omitempty"`
+	Unseen  int         `json:"unseen,omitempty"`
+}
+
 func (f *FcmClient) SendToMany(ids []string, data FmcMessage) (error, string) {
 	var noti = fcm.NotificationPayload{
 		Title: data.Title,
 		Body:  data.Body,
 		Sound: "ting.wav",
 	}
-	f.NewFcmRegIdsMsg(ids, map[string]interface{}{"notify": data.Data})
+	var dataMs = dataMsg{
+		Content: data.Data,
+		Time:    time.Now().Unix(),
+	}
+	f.NewFcmRegIdsMsg(ids, map[string]interface{}{
+		"data": dataMs})
 	f.SetNotificationPayload(&noti)
+	f.SetContentAvailable(true)
+	// f.SetMsgData(map[string]interface{}{"notify": data.Data})
 	status, err := f.Send()
 	if err != nil {
 		return err, RESPONSE_FAIL

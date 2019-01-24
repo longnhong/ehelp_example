@@ -39,7 +39,7 @@ func GetVoucherByID(vouCode string) (vouRes *Voucher, err error) {
 		return
 	}
 	vouCode = strings.ToUpper(vouCode)
-	if len(VoucherCache) > 0 {
+	if VoucherCache != nil && len(VoucherCache) > 0 {
 		for _, vou := range VoucherCache {
 			if strings.ToUpper(vou.Code) == vouCode {
 				vouRes = vou

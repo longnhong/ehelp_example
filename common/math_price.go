@@ -142,6 +142,9 @@ func (ord *MathPriceOrder) MathPriceOrder() (hourAll float32, priceAllHour float
 	if priceEnd < 0 {
 		priceEnd = 0
 	}
+	// if ord.PriceEnd != priceEnd {
+	// 	rest.AssertNil(rest.BadRequestValid(err))
+	// }
 	fmt.Println(
 		"hourAll", hourAll,
 		"priceAllHour", priceAllHour,

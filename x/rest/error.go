@@ -8,9 +8,18 @@ type IHttpError interface {
 	StatusCode() int
 }
 type BadRequest string
+type BadRequestPrice string
 
 func (e BadRequest) Error() string {
 	return string(e)
+}
+
+func (e BadRequestPrice) Error() string {
+	return string(e)
+}
+
+func (e BadRequestPrice) StatusCode() int {
+	return 1001
 }
 
 func (e BadRequest) StatusCode() int {
