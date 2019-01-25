@@ -62,9 +62,11 @@ func initFcm() {
 
 func initSystem() {
 	setting.SettingSys.TimeHourHiddenOrder, _ = context.Int("server.time_hour_hidden_order")
-	setting.SettingSys.AboutHourStartWork, _ = context.Int("server.about_hour_start_work")
+	setting.SettingSys.AboutHourGoWork, _ = context.Int("server.about_hour_go_work")
 	var finish, _ = context.String("server.about_minute_finish_work")
 	setting.SettingSys.AboutMinuteFinishWork, _ = strconv.ParseFloat(finish, 64)
+	var working, _ = context.String("server.about_minute_working")
+	setting.SettingSys.AboutMinuteWorking, _ = strconv.ParseFloat(working, 64)
 }
 
 // func initCache() {

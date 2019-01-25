@@ -6,13 +6,13 @@ import (
 	"time"
 	//"ehelp/o/user"
 	//"ehelp/x/rest"
+	"ehelp/common"
 	"ehelp/o/service"
+	"ehelp/setting"
+	"ehelp/x/rest"
 	"errors"
 	validator "gopkg.in/go-playground/validator.v9"
 	"gopkg.in/mgo.v2/bson"
-	//"strings"
-	"ehelp/common"
-	"ehelp/x/rest"
 )
 
 var validate = validator.New()
@@ -123,31 +123,31 @@ func (ord *Order) CheckTimeUpdateItem(isWorking bool) (itemCheck *common.DayWeek
 	var timeNow = common.GetTimeNowVietNam()
 	fmt.Printf("== HE THONG :", timeNow)
 	itemCheck = ord.MathPriceOrder.DayWeeks[0]
-	// for _, item := range ord.MathPriceOrder.DayWeeks {
-	// 	itemCheck = item
-	// 	if common.CompareDayTime(timeNow, item.DateIn) == 0 {
-	// 		if isWorking {
-	// 			var timeNowHour = common.HourMinuteEpoch(timeNow.Unix())
-	// 			var res = item.HourStart - timeNowHour
-	// 			fmt.Printf("== CHECK 30p :", res)
-	// 			if (res <= 0.5 && res >= 0) || (res <= 0 && res >= -0.5) {
-	// 				itemCheck = item
-	// 				break
-	// 			} else {
-	// 				var msgErr = "Giờ làm của đơn: " + common.ConvertF32ToString(item.HourStart)
-	// 				msgErr += "\nThời gian bắt đầu phải sớm hoặc muộn hơn trong khoảng 30 phút!"
-	// 				err = rest.BadRequestValid(errors.New(msgErr))
-	// 				return
-	// 			}
-	// 		} else {
-	// 			itemCheck = item
-	// 			break
-	// 		}
-	// 	} else if item.Status == common.ITEM_ORDER_STATUS_WORKING && !isWorking {
-	// 		itemCheck = item
-	// 		break
-	// 	}
-	// }
+	for _, item := range ord.MathPriceOrder.DayWeeks {
+		itemCheck = item
+		if common.CompareDayTime(timeNow, item.DateIn) == 0 {
+			if isWorking {
+				var timeNowHour = common.HourMinuteEpoch(timeNow.Unix())
+				var res = float64(item.HourStart - timeNowHour)
+				fmt.Printf("== CHECK 30p :", res)
+				if (res <= setting.SettingSys.AboutMinuteWorking && res >= 0) || (res <= 0 && res >= -setting.SettingSys.AboutMinuteWorking) {
+					itemCheck = item
+					break
+				} else {
+					var msgErr = "Giờ làm của đơn: " + common.ConvertF32ToString(item.HourStart)
+					msgErr += "\nThời gian bắt đầu phải sớm hoặc muộn hơn trong khoảng 30 phút!"
+					err = rest.BadRequestValid(errors.New(msgErr))
+					return
+				}
+			} else {
+				itemCheck = item
+				break
+			}
+		} else if item.Status == common.ITEM_ORDER_STATUS_WORKING && !isWorking {
+			itemCheck = item
+			break
+		}
+	}
 	if itemCheck == nil {
 		err = rest.BadRequestValid(errors.New("Không có lịch làm việc hôm nay!"))
 	}

@@ -12,7 +12,7 @@ func GetSendPushWork() (ords []*order.OrderCheckChange) {
 	ords = make([]*order.OrderCheckChange, 0)
 	for _, ord := range CacheOrderByDay.Orders {
 		var res = int(ord.HourStartItem) - common.GetTimeNowVietNam().Hour()
-		if !ord.IsUsedBf && setting.SettingSys.AboutHourStartWork == res && (ord.Status == common.ORDER_STATUS_ACCEPTED || ord.Status == common.ORDER_STATUS_WORKING) {
+		if !ord.IsUsedBf && setting.SettingSys.AboutHourGoWork == res && (ord.Status == common.ORDER_STATUS_ACCEPTED || ord.Status == common.ORDER_STATUS_WORKING) {
 			ords = append(ords, ord)
 		}
 	}
