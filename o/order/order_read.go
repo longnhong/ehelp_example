@@ -342,7 +342,10 @@ func GetListOrderByStatus(userId string, serviceEmps []string, addressEmp string
 			// 	queryMatch["address_loc.address"] = bson.M{"$regex": addressEmp, "$options": "i"}
 			// }
 			if len(serviceEmps) > 0 {
-				queryMatch["service_works.0"] = bson.M{"$in": serviceEmps}
+				//queryMatch["service_works.0"] = bson.M{"$in": serviceEmps}
+				queryMatch["service_works"] = bson.M{"$elemMatch": bson.M{
+					"$in": serviceEmps,
+				}}
 				queryMatch["day_start_work"] = bson.M{"$gte": timeNow + int64(setting.SettingSys.TimeHourHiddenOrder*3600)}
 			}
 		}

@@ -4,6 +4,7 @@ import (
 	"ehelp/setting"
 	"ehelp/x/db/mongodb"
 	"gopkg.in/mgo.v2/bson"
+	"strconv"
 	"time"
 )
 
@@ -40,15 +41,20 @@ func UpdateSetting() {
 }
 
 func (st *Setting) updateValue() {
+	var val = st.Value.(string)
 	switch st.Code {
 	case TimeHourHiddenOrder:
-		setting.SettingSys.TimeHourHiddenOrder = st.Value.(int)
+		i, _ := strconv.ParseInt(val, 10, 64)
+		setting.SettingSys.TimeHourHiddenOrder = int(i)
 	case AboutHourGoWork:
-		setting.SettingSys.AboutHourGoWork = st.Value.(int)
+		i, _ := strconv.ParseInt(val, 10, 64)
+		setting.SettingSys.AboutHourGoWork = int(i)
 	case AboutMinuteFinishWork:
-		setting.SettingSys.AboutMinuteFinishWork = st.Value.(float64) / 60
+		i, _ := strconv.ParseFloat(val, 64)
+		setting.SettingSys.AboutMinuteFinishWork = i / 60
 	case AboutMinuteWorking:
-		setting.SettingSys.AboutMinuteWorking = st.Value.(float64) / 60
+		i, _ := strconv.ParseFloat(val, 64)
+		setting.SettingSys.AboutMinuteWorking = i / 60
 	}
 }
 func (noti *Setting) Create() (*Setting, error) {
