@@ -19,8 +19,25 @@ func NewAuthServer(parent *gin.RouterGroup, name string) {
 	var s = AuthServer{
 		RouterGroup: parent.Group(name),
 	}
+	s.POST("/lang_setting", s.handleLangSetting)
 	s.POST("/signin", s.handleSignin)
 	s.POST("/delete", s.handleDeleAccount)
+}
+
+func (s *AuthServer) handleLangSetting(ctx *gin.Context) {
+	var body = struct {
+		Lang string `json:"lang"`
+	}{}
+	ctx.BindJSON(&body)
+	var err error
+	var cus, emp = oAuth.GetUserFromToken(ctx.Request)
+	if cus != nil {
+		err = cus.UpdateLang(body.Lang)
+	} else {
+		err = emp.UpdateLang(body.Lang)
+	}
+	rest.AssertNil(err)
+	s.Success(ctx)
 }
 
 func (s *AuthServer) handleSignin(ctx *gin.Context) {

@@ -111,10 +111,11 @@ func (usr *Employee) GetMyAvgRate() float32 {
 	}
 }
 
-func GetListEmpVsOrderBidding(serviceOrder []string, addressOrder string) (empIds []string, err error) {
+func GetListEmpVsOrderBidding(serviceOrder []string, addressOrder string, lang string) (empIds []string, err error) {
 	err = EmployeeTable.Find(bson.M{
 		"is_active":            true,
 		"emp_work.service_ids": serviceOrder[0],
+		"$or":                  []bson.M{bson.M{"lang": nil}, bson.M{"lang": lang}},
 		//"$text":                bson.M{"$search": addressOrder}, // đây là index "emp_work.address_work"
 	}).Distinct("_id", &empIds)
 	if err != nil && err.Error() == common.NOT_EXIST {

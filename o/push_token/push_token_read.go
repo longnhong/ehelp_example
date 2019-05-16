@@ -15,10 +15,11 @@ func GetByID(id string) (*PushToken, error) {
 
 func GetPushsUserId(userId string) ([]string, error) {
 	var auth *PushToken
-	err := PushTokenTable.FindOne(bson.M{
+	var filter = bson.M{
 		"user_id":   userId,
 		"is_revoke": false,
-	}, &auth)
+	}
+	err := PushTokenTable.FindOne(filter, &auth)
 	var p string
 	if auth != nil {
 		p = auth.PushToken

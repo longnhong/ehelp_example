@@ -110,6 +110,9 @@ func (s *EmpAuthServerMux) handleLoginGmailEmp(ctx *gin.Context) {
 func (s *EmpAuthServerMux) handleRegisterEmp(ctx *gin.Context) {
 	var body = oAuth.RegisterUser{}
 	ctx.BindJSON(&body)
+	if len(body.Lang) == 0 {
+		body.Lang = common.LANG_VI
+	}
 	var u, p = oAuth.RegisterEmployee(&body)
 	s.SendData(ctx, map[string]interface{}{
 		"employee":     u,

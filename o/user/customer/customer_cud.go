@@ -70,3 +70,7 @@ func DeleteUserByID(userID string) error {
 	var err = CustomerTable.RemoveId(userID)
 	return err
 }
+
+func (c *Customer) UpdateLang(lang string) error {
+	return CustomerTable.UpdateSetByID(c.ID, bson.M{"lang": lang})
+}

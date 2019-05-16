@@ -37,15 +37,16 @@ type LoginGmail struct {
 }
 
 type RegisterUser struct {
-	Phone       string `json:"phone"`
-	Email       string `json:"email"`
-	FullName    string `json:"full_name"`
-	Password    string `json:"password"`
-	ReferenCode string `json:"reference_code"`
-	Area        string `json:"area"`
-	ServiceId   string `json:"service_id"`
-	DeviceId    string `json:"device_id"`
-	PushToken   string `json:"push_token"`
+	Phone       string      `json:"phone"`
+	Email       string      `json:"email"`
+	FullName    string      `json:"full_name"`
+	Password    string      `json:"password"`
+	ReferenCode string      `json:"reference_code"`
+	Area        string      `json:"area"`
+	ServiceId   string      `json:"service_id"`
+	DeviceId    string      `json:"device_id"`
+	PushToken   string      `json:"push_token"`
+	Lang        common.Lang `json:"json"`
 }
 
 type Password string

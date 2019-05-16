@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"ehelp/common"
 	oAuth "ehelp/o/user/auth"
 	"ehelp/x/rest"
 	"github.com/gin-gonic/gin"
@@ -78,6 +79,9 @@ func (s *AuthServerMux) handleLoginGmailCus(ctx *gin.Context) {
 func (s *AuthServerMux) handleRegisterCus(ctx *gin.Context) {
 	var body = oAuth.RegisterUser{}
 	ctx.BindJSON(&body)
+	if len(body.Lang) == 0 {
+		body.Lang = common.LANG_VI
+	}
 	var u, p = oAuth.RegisterCustomer(&body)
 	s.SendData(ctx, map[string]interface{}{
 		"customer":     u,

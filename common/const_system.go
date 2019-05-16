@@ -31,6 +31,14 @@ const (
 	TYPE_FOUR_WEEK  = TypeWork(4) // kiểu 4 tuần 1 lần
 )
 
+type Lang string
+
+const (
+	LANG_VI = Lang("vi")
+	LANG_EN = Lang("en")
+	LANG_CN = Lang("cn")
+)
+
 type TypePayment int
 
 const (

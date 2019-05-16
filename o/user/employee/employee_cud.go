@@ -147,3 +147,7 @@ func UploadAvatarBase64(userID string, avatar string, linkAvatar string) error {
 	}
 	return EmployeeTable.UpdateId(userID, bson.M{"$set": data})
 }
+
+func (e *Employee) UpdateLang(lang string) error {
+	return EmployeeTable.UpdateSetByID(e.ID, bson.M{"lang": lang})
+}

@@ -58,8 +58,8 @@ func UpdateCusNewAndHour(empID string, countCusInOrder int, allHourItemOrder flo
 	employee.UpdateEmployeeByCusNewAndHour(empID, countCusInOrder, allHourItemOrder)
 }
 
-func GetListEmpVsOrderBidding(serviceOrder []string, addressOrder string) ([]string, error) {
-	return employee.GetListEmpVsOrderBidding(serviceOrder, addressOrder)
+func GetListEmpVsOrderBidding(serviceOrder []string, addressOrder string, lang string) ([]string, error) {
+	return employee.GetListEmpVsOrderBidding(serviceOrder, addressOrder, lang)
 }
 
 func UpdateRateToEmp(empId string, rate int) {
