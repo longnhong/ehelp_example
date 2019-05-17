@@ -17,7 +17,7 @@ func canceled(ord *order.Order) {
 func accepted(ord *order.Order) {
 	fmt.Printf("========= EmpID: "+ord.EmpID+" ID: "+ord.ID, ord.ServiceWorks)
 	CreateOrderHst(ord.EmpID, ord.ID, ord.ServiceWorks, common.ORDER_STATUS_ACCEPTED)
-	var emp, _ = cache.GetEmpID(ord.EmpID)
+	var emp, _ = cache.GetCusID(ord.CusID)
 	fmt.Println("==== KHÁCH" + ord.CusID)
 	pushs, _ := push_token.GetPushsUserId(ord.CusID) // phải distinic
 	if len(pushs) > 0 {
@@ -46,26 +46,28 @@ func bidding(ord *order.Order) {
 	var langs = []common.Lang{common.LANG_VI, common.LANG_EN, common.LANG_CN}
 	for _, lang := range langs {
 		var empIds, _ = oAuth.GetListEmpVsOrderBidding(ord.ServiceWorks, ord.AddressLoc.Address, string(lang))
-		var pushs, err2 = push_token.GetPushsUserIds(empIds) // phải distinic
-		logAction.Errorf("push_token.GetPushsUserId", err2)
-		// var noti = fcm.FmcMessage{
-		// 	Title: "Có việc mới!",
-		// 	Body:  "Công việc tại " + ord.AddressLoc.Address,
-		// }
-		var noti = fcm.FmcMessage{}
-		switch lang {
-		case common.LANG_VI:
-			noti.Title = TitleAccepVI
-			noti.Body = BodyAccepVI
-		case common.LANG_EN:
-			noti.Title = TitleAccepEN
-			noti.Body = BodyAccepEN
-		case common.LANG_CN:
-			noti.Title = TitleAccepCN
-			noti.Body = BodyAccepCN
+		if empIds != nil && len(empIds) > 0 {
+			var pushs, err2 = push_token.GetPushsUserIds(empIds) // phải distinic
+			logAction.Errorf("push_token.GetPushsUserId", err2)
+			// var noti = fcm.FmcMessage{
+			// 	Title: "Có việc mới!",
+			// 	Body:  "Công việc tại " + ord.AddressLoc.Address,
+			// }
+			var noti = fcm.FmcMessage{}
+			switch lang {
+			case common.LANG_VI:
+				noti.Title = TitleAccepVI
+				noti.Body = BodyAccepVI
+			case common.LANG_EN:
+				noti.Title = TitleAccepEN
+				noti.Body = BodyAccepEN
+			case common.LANG_CN:
+				noti.Title = TitleAccepCN
+				noti.Body = BodyAccepCN
+			}
+			sendNotify(noti, empIds, "", true, pushs, ord.ID, common.ORDER_STATUS_BIDDING)
+			CreateOrderHst(ord.CusID, ord.ID, ord.ServiceWorks, common.ORDER_STATUS_BIDDING)
 		}
-		sendNotify(noti, empIds, "", true, pushs, ord.ID, common.ORDER_STATUS_BIDDING)
-		CreateOrderHst(ord.CusID, ord.ID, ord.ServiceWorks, common.ORDER_STATUS_BIDDING)
 	}
 
 }
@@ -75,7 +77,7 @@ func working(ord *order.Order, itemOrder *common.DayWeek) {
 		ord.CusID, ord.EmpID, ord.ServiceWorks, ord.ID, common.ORDER_STATUS_WORKING, itemOrder.IdItem,
 		common.ITEM_ORDER_STATUS_WORKING, itemOrder.HourStart, itemOrder.HourEnd)
 	var pushs, _ = push_token.GetPushsUserId(ord.CusID) // phải distinic
-	var emp, _ = cache.GetEmpID(ord.EmpID)
+	var emp, _ = cache.GetCusID(ord.CusID)
 	// var noti = fcm.FmcMessage{
 	// 	Title: "Bắt đầu làm việc!",
 	// 	Body:  empOrd.FullName + " vừa bắt đầu làm việc!"}
@@ -104,7 +106,7 @@ func finished(ord *order.Order, itemOrder *common.DayWeek) {
 	var countCusNew, _ = order.CheckCustomerNewOfEmployee(ord.CusID, ord.EmpID)
 	oAuth.UpdateCusNewAndHour(ord.EmpID, countCusNew, itemOrder.HourDay)
 	var pushs, _ = push_token.GetPushsUserId(ord.CusID) // phải distinic
-	var emp, _ = cache.GetEmpID(ord.EmpID)
+	var emp, _ = cache.GetCusID(ord.CusID)
 	if ord.Status == common.ORDER_STATUS_FINISHED {
 		// var noti = fcm.FmcMessage{
 		// 	Title: "Công việc đã hoàn thành!",
