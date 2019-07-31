@@ -89,3 +89,8 @@ func CreateEmpGmail(lb *LoginGmail) (*employee.Employee, string) {
 	emp.CrateEmployee()
 	return &emp, CreatePushToken(int(RoleEmployee), emp.ID, lb.DeviceId, lb.PushToken).ID
 }
+
+func ResetPassEmp(phone string, pass string) error {
+	var err = employee.ResetPass(phone, pass)
+	return err
+}

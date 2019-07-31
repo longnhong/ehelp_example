@@ -1,0 +1,20 @@
+{
+    "db":{
+        "max_pool": 20,
+        "path":"45.123.96.110:27017",
+        "db_name": "ehelp"
+    }, "fcm":{
+        "fcm_employee": "AAAACK4gl4U:APA91bGA8gO6egQlHYiA3vfQcpXkINR-1vBd1h3KRi42OECZa5db8kjnNfY_5pP7L_82yd_ZekmGngHpqz0L5IiOBkkx7fN5KhG7HVqxGSYiraI1nzLkncun7N4oBlHobGDMdyTP69FJ",
+        "fcm_customer":"AAAALc7FbOo:APA91bHeZv2q4tSnNzcGd3pr5nROpVr2AyR7Kc2dWnrI7DH-2AuPLF1rA1bNtw8M3rLUGxHokwl5hev8829z2V2yilKrJE3A0BUYGaH1LUJ3YJ0b7yX_03dQTonxM7OYjidY-SvZpTfs",
+        "owner": "196742573290",
+        "avatar":":8080/static/avatar/"
+    }, "system":{
+        "time_hour_hidden_order":3,
+        "about_hour_go_work":1,
+        "about_minute_finish_work":0.25,
+        "about_minute_working":0.5 
+    }, "log":{
+        "log_dir":"./log",
+        "alsologtostderr":true
+    }
+}

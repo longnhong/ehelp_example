@@ -165,3 +165,8 @@ func GetUserFromToken(r *http.Request) (*customer.Customer, *employee.Employee) 
 	rest.AssertNil(err)
 	return nil, emp
 }
+
+func ResetPassCus(phone string, pass string) error {
+	var err = customer.ResetPass(phone, pass)
+	return err
+}

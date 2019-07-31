@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/gin-gonic/gin"
 	// 1. init first
 	_ "ehelp/init"
 	// 2. iniit 2nd
@@ -10,14 +11,10 @@ import (
 	"ehelp/middleware"
 	"ehelp/room"
 	"ehelp/system"
-	"fmt"
-	"github.com/gin-gonic/gin"
 	"net/http"
-	"time"
 )
 
 func main() {
-	fmt.Printf("TIME SERVER: ", time.Now().Unix())
 	router := gin.New()
 	//static
 	router.StaticFS("/static", http.Dir("./upload"))
@@ -42,7 +39,10 @@ func main() {
 	//api
 	rootAPI := router.Group("/api")
 	api.InitApi(rootAPI)
-	//ws
+	//	ws
 	room.NewRoomServer(router.Group("/room"))
-	router.Run(":8080")
+	err := router.Run(":8080")
+	if err != nil {
+		return
+	}
 }

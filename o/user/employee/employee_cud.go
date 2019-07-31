@@ -1,6 +1,7 @@
 package employee
 
 import (
+	"ehelp/o/user"
 	"ehelp/x/rest"
 	"errors"
 	"gopkg.in/mgo.v2/bson"
@@ -70,7 +71,7 @@ func UpdateEmployeeByCusNewAndHour(empID string, countCusInOrder int, allHourIte
 	var queryUpdate = bson.M{}
 	if countCusInOrder > 0 {
 		queryUpdate["$inc"] = bson.M{
-			"all_customer":  1,
+			"all_Employee":  1,
 			"all_hour_work": allHourItemOrder,
 		}
 	} else {
@@ -150,4 +151,19 @@ func UploadAvatarBase64(userID string, avatar string, linkAvatar string) error {
 
 func (e *Employee) UpdateLang(lang string) error {
 	return EmployeeTable.UpdateSetByID(e.ID, bson.M{"lang": lang})
+}
+
+func ResetPass(phone string, password string) error {
+	var cus *Employee
+	err := EmployeeTable.FindOne(bson.M{"phone": phone}, &cus)
+	if err != nil {
+		return rest.BadRequestNotFound(errors.New("Tài khoản không tồn tại!"))
+	}
+	var pass = user.Password(password)
+	psd, err := user.Password(pass).GererateHashedPassword()
+	if err != nil {
+		return err
+	}
+	err = EmployeeTable.UpdateSetByID(cus.ID, bson.M{"$set": bson.M{"password": psd}})
+	return err
 }

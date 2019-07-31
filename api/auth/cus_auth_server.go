@@ -22,6 +22,7 @@ func NewAuthCustomerServer(parent *gin.RouterGroup, name string) {
 	s.POST("/loginfb_update", s.handleLoginFbUpdateCus)
 	s.POST("/login_gmail", s.handleLoginGmailCus)
 	s.POST("/logingm_update", s.handleLoginGmUpdateCus)
+	s.POST("/reset_pass", s.handleResetPass)
 	s.POST("/register", s.handleRegisterCus)
 }
 
@@ -34,6 +35,16 @@ func (s *AuthServerMux) handleLoginCus(ctx *gin.Context) {
 		"access_token": p,
 	})
 
+}
+func (s *AuthServerMux) handleResetPass(ctx *gin.Context) {
+	var body = struct {
+		Phone    string `json:"phone"`
+		Password string `json:"password"`
+	}{}
+	ctx.BindJSON(&body)
+	var err = oAuth.ResetPassCus(body.Phone, body.Password)
+	rest.AssertNil(err)
+	s.SendData(ctx, nil)
 }
 
 func (s *AuthServerMux) handleLoginFacebookCus(ctx *gin.Context) {

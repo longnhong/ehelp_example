@@ -31,6 +31,7 @@ func NewAuthEmployeeServer(parent *gin.RouterGroup, name string) {
 	s.POST("/login_gmail", s.handleLoginGmailEmp)
 	s.POST("/logingm_update", s.handleLoginGmUpdateEmp)
 	s.POST("/register", s.handleRegisterEmp)
+	s.POST("/reset_pass", s.handleResetPassEmp)
 	s.POST("/update_info", s.handleUpdateInfo)
 }
 
@@ -60,6 +61,17 @@ func (s *EmpAuthServerMux) handleUpdateInfo(ctx *gin.Context) {
 	// up.LinkAvatar = fcm.LINK_AVATAR + emp.ID + ".jpg"
 	rest.AssertNil(emp.UpdateInfo(up))
 	s.Success(ctx)
+}
+
+func (s *EmpAuthServerMux) handleResetPassEmp(ctx *gin.Context) {
+	var body = struct {
+		Phone    string `json:"phone"`
+		Password string `json:"password"`
+	}{}
+	ctx.BindJSON(&body)
+	var err = oAuth.ResetPassEmp(body.Phone, body.Password)
+	rest.AssertNil(err)
+	s.SendData(ctx, nil)
 }
 
 func (s *EmpAuthServerMux) handleLoginEmp(ctx *gin.Context) {
