@@ -164,6 +164,6 @@ func ResetPass(phone string, password string) error {
 	if err != nil {
 		return err
 	}
-	err = EmployeeTable.UpdateSetByID(cus.ID, bson.M{"$set": bson.M{"password": psd}})
+	err = EmployeeTable.UpdateSetByID(cus.ID, bson.M{"password": psd})
 	return err
 }

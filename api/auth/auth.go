@@ -21,6 +21,7 @@ func NewAuthServer(parent *gin.RouterGroup, name string) {
 	}
 	s.POST("/lang_setting", s.handleLangSetting)
 	s.POST("/signin", s.handleSignin)
+//	s.POST("/signout", s.handleSignOut)
 	s.POST("/delete", s.handleDeleAccount)
 }
 
@@ -55,6 +56,16 @@ func (s *AuthServer) handleSignin(ctx *gin.Context) {
 	s.SendData(ctx, map[string]interface{}{
 		"access_token": auth.ID,
 	})
+}
+
+func (s *AuthServer) handleSignOut(ctx *gin.Context) {
+	var loginInfo = struct {
+		Token string`json:"token"`
+	}{}
+	ctx.BindJSON(&loginInfo)
+	err := auth.UpdateRevoke(loginInfo.Token, true)
+	rest.AssertNil(err)
+	s.SendData(ctx, nil)
 }
 
 func (s *AuthServer) handleDeleAccount(ctx *gin.Context) {
