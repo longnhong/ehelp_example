@@ -106,8 +106,8 @@ func initFcm(f fcmConfig) {
 	// fcm.FCM_SERVER_KEY_CUSTOMER, _ = context.String("fcm.serverkey.customer")
 	// fcm.FCM_SERVER_KEY_EMPLOYEE, _ = context.String("fcm.serverkey.employee")
 	// fcm.LINK_AVATAR, _ = context.String("server.avatar")
-	fcm.FCM_SERVER_KEY_CUSTOMER = f.FcmEmp
-	fcm.FCM_SERVER_KEY_EMPLOYEE = f.FcmCus
+	fcm.FCM_SERVER_KEY_CUSTOMER = f.FcmCus
+	fcm.FCM_SERVER_KEY_EMPLOYEE = f.FcmEmp
 	fcm.LINK_AVATAR = f.Avatar
 	fcm.NewFcmApp(fcm.FCM_SERVER_KEY_CUSTOMER, fcm.FCM_SERVER_KEY_EMPLOYEE)
 }

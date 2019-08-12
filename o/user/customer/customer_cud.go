@@ -31,7 +31,7 @@ func ResetPass(phone string, password string) error {
 	if err != nil {
 		return err
 	}
-	err = CustomerTable.UpdateSetByID(cus.ID, bson.M{"$set": bson.M{"password": psd}})
+	err = CustomerTable.UpdateSetByID(cus.ID, bson.M{"password": psd})
 	return err
 }
 
